@@ -54,8 +54,8 @@
             callback.apply(context, arguments);
         };
         url = '?format=jsonp&callback=' +
-                encodeURIComponent('yourls.__jsonp_callbacks[' + id + ']') +
-                '&' + url;
+            encodeURIComponent('yourls.__jsonp_callbacks[' + id + ']') +
+            '&' + url;
         url += '&' + paramify(auth);
         script.setAttribute('src', api + url);
         document.getElementsByTagName('head')[0].appendChild(script);
