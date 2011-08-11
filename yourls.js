@@ -1,48 +1,103 @@
-(function (window) {
+/*!
+ * YOURLS API v1.0.0
+ * http://forchoon.com/projects/javascript/yourls-api/
+ *
+ * Copyright 2011, Alasdair Mercer
+ * Licensed under the GPL Version 3 license.
+ */
+
+/*jslint
+    browser: true, sloppy: true, nomen: true, maxerr: 50, indent: 4
+*/
+
+(function () {
     var api = '/yourls-api.php',
         auth = {},
         yourls = window.yourls = {};
     yourls.__jsonp_callbacks = {};
+
+    /**
+     * <p>Converts the object provided in to a URL parameter string.</p>
+     * @param {Object} params The object whose properties are to be
+     * parameterised.
+     * @returns {String} The parameterised string created.
+     */
     function paramify(params) {
-        var str = '', key;
+        var key, str = '';
         for (key in params) {
             if (params.hasOwnProperty(key)) {
-                if (params[key] !== undefined) {
+                if (typeof params[key] !== 'undefined') {
                     str += key + '=' + params[key] + '&';
                 }
             }
         }
         return str.replace(/&$/, '');
     }
+
+    /**
+     * <p>Sends a JSONP request to the YOURLS API that calls the callback
+     * function with the context specified as <code>this</code>.</p>
+     * @param {String} url The URL to be called.
+     * @param {Function} callback The function to be called when the response
+     * has been received.
+     * @param {Object} context The context in which the callback function is
+     * to be applied.
+     */
     function jsonp(url, callback, context) {
         var id = +new Date(),
             script = document.createElement('script');
-        while (yourls.__jsonp_callbacks[id] !== undefined) {
+        while (typeof yourls.__jsonp_callbacks[id] !== 'undefined') {
             id += Math.random();
         }
         yourls.__jsonp_callbacks[id] = function () {
             delete yourls.__jsonp_callbacks[id];
             callback.apply(context, arguments);
         };
-        url = '?format=jsonp&callback=' + encodeURIComponent('yourls.__jsonp_callbacks[' + id + ']') + '&' + url;
+        url = '?format=jsonp&callback=' +
+                encodeURIComponent('yourls.__jsonp_callbacks[' + id + ']') +
+                '&' + url;
         url += '&' + paramify(auth);
         script.setAttribute('src', api + url);
         document.getElementsByTagName('head')[0].appendChild(script);
     }
+
+    /**
+     * <p>Stores the URL and user credentials to be used to connect to the
+     * YOURLS API.</p>
+     * <p>This won't validate the URL or credentials at any point; this is
+     * performed by each individual method.</p>
+     * @param {String} url The URL of the YOURLS installation's API.
+     * @param {Object} [credentials] Contains the user's credentials.
+     * @param {String} [credentials.password] The user's password.
+     * @param {String} [credentials.signature] The user's signature (takes
+     * precedence over username/password authentication).
+     * @param {String} [credentials.username] The user's name.
+     * @returns {yourls} The yourls instance to allow call chaining.
+     */
     yourls.connect = function (url, credentials) {
         api = url;
+        auth = {};
         if (credentials) {
             if (credentials.signature) {
-                auth = {signature: credentials.signature};
+                auth.signature = credentials.signature;
             } else {
-                auth = {
-                    password: credentials.password,
-                    username: credentials.username
-                };
+                auth.password = credentials.password;
+                auth.username = credentials.username;
             }
         }
         return this;
     };
+
+    /**
+     * <p>Retrieves the short URL for a long URL.</p>
+     * @param {String} url The URL to be shortened.
+     * @param {String} [keyword] A custom short URL keyword/hash.
+     * @param {Function} callback The function to be called when the response
+     * has been received.
+     * @param {Object} [context] The context in which the callback function is
+     * to be applied.
+     * @returns {yourls} The yourls instance to allow call chaining.
+     */
     yourls.shorten = function (url, keyword, callback, context) {
         var data = {
             action: 'shorturl',
@@ -56,7 +111,20 @@
         jsonp(paramify(data), callback, context);
         return this;
     };
-    yourls.stats = function (filter, limit, callback) {
+
+    /**
+     * <p>Retrives the statistics for all the shortened URLs which can be
+     * optionally filtered.</p>
+     * @param {String} [filter] The filter to be applied (top, bottom, rand,
+     * last).
+     * @param {Number} [limit] The maximum number of links to return.
+     * @param {Function} callback The function to be called when the response
+     * has been received.
+     * @param {Object} [context] The context in which the callback function is
+     * to be applied.
+     * @returns {yourls} The yourls instance to allow call chaining.
+     */
+    yourls.stats = function (filter, limit, callback, context) {
         var data = {action: 'stats'},
             filterType = typeof filter;
         switch (filterType) {
@@ -75,27 +143,56 @@
                 data.limit = limit;
             }
         }
-        jsonp(paramify(data), callback);
+        jsonp(paramify(data), callback, context);
         return this;
     };
+
+    /**
+     * <p>The constructor for url objects.</p>
+     * <p>Just creating an instance of a url doesn't fetch any data from the
+     * YOURLS API and you'll need to be explicit about what you want to do in
+     * order for that to happen.</p>
+     * @param {String} url The URL for which the new url object is to be
+     * created for.
+     * @constructor
+     */
     yourls.url = function (url) {
         if (!(this instanceof yourls.url)) {
             return new yourls.url(url);
         }
         this.url = url;
     };
-    yourls.url.prototype.expand = function (callback) {
+
+    /**
+     * <p>Retrives the long URL for a short URL.</p>
+     * @param {Function} callback The function to be called when the response
+     * has been received.
+     * @param {Object} [context] The context in which the callback function is
+     * to be applied.
+     * @returns {yourls.url} The url instance to allow call chaining.
+     */
+    yourls.url.prototype.expand = function (callback, context) {
         jsonp(paramify({
             action: 'expand',
             shorturl: this.url
-        }), callback);
+        }), callback, context);
         return this;
     };
-    yourls.url.prototype.stats = function (callback) {
+
+    /**
+     * <p>Retrives statistics for a single short URL.</p>
+     * @param {Function} callback The function to be called when the response
+     * has been received.
+     * @param {Object} [context] The context in which the callback function is
+     * to be applied.
+     * @returns {yourls.url} The url instance to allow call chaining.
+     */
+    yourls.url.prototype.stats = function (callback, context) {
         jsonp(paramify({
             action: 'url-stats',
             shorturl: this.url
-        }), callback);
+        }), callback, context);
         return this;
     };
-}(window));
+
+}());
