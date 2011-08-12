@@ -21,12 +21,12 @@ make the change yourself (requires very few changes).
 yourls.connect(url, [credentials])
 ```
 
-This is the first step and where you'll provide the URL of the YOURLS API you
-wish to connect to, baring in mind that the URL should point to the
-`yourls-api.php` file and not just its directory. If you're going to be
-connecting to a private YOURLS installation you'll also need to provide either
-the username/password OR the signature token if you're wanting to use
-[passwordless API
+This is the first step and where you'll provide the URL of the
+[YOURLS](http://yourls.org) API you wish to connect to, baring in mind that the
+URL should point to the `yourls-api.php` file and not just its directory. If
+you're going to be connecting to a private YOURLS installation you'll also need
+to provide either the username/password OR the signature token if you're
+wanting to use [passwordless API
 requests](http://code.google.com/p/yourls/wiki/PasswordlessAPI) (the signature
 token takes precedence here).
 
@@ -140,5 +140,5 @@ need to be provided.
 You may have also noticed that most API calls accept an optional `context`
 parameter and none of the examples use it. I thought this might have over
 complicated the examples so I decided to exclude this parameter. However, this
-is a powerful parameter and allows you to apply a context to the `callback`
+is a powerful parameter that allows you to apply a context to the `callback`
 function so that the `this` keyword refers to `context`.
