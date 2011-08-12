@@ -11,7 +11,7 @@
 */
 
 (function () {
-    var api = '/yourls-api.php',
+    var api = '',
         auth = {},
         yourls = window.yourls = {};
     yourls.__jsonp_callbacks = {};
@@ -66,7 +66,8 @@
      * YOURLS API.</p>
      * <p>This won't validate the URL or credentials at any point; this is
      * performed by each individual method.</p>
-     * @param {String} url The URL of the YOURLS installation's API.
+     * @param {String} url The URL of the YOURLS installation's API (must point
+     * to the <code>yourls-api.php</code> file and not just the directory.
      * @param {Object} [credentials] Contains the user's credentials.
      * @param {String} [credentials.password] The user's password.
      * @param {String} [credentials.signature] The user's signature (takes
