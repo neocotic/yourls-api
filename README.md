@@ -1,6 +1,14 @@
-# [YOURLS API](http://forchoon.com/projects/javascript/yourls-api/)
+                                  ___                                           
+                                 /\_ \                                    __    
+     __  __    ___   __  __  _ __\//\ \     ____            __     _____ /\_\   
+    /\ \/\ \  / __`\/\ \/\ \/\`'__\\ \ \   /',__\ _______ /'__`\  /\ '__`\/\ \  
+    \ \ \_\ \/\ \L\ \ \ \_\ \ \ \/  \_\ \_/\__, `\\______\\ \L\.\_\ \ \L\ \ \ \ 
+     \/`____ \ \____/\ \____/\ \_\  /\____\/\____//______/ \__/.\_\\ \ ,__/\ \_\
+      `/___/> \/___/  \/___/  \/_/  \/____/\/___/         \/__/\/_/ \ \ \/  \/_/
+         /\___/                                                      \ \_\      
+         \/__/                                                        \/_/      
 
-A JavaScript library that provides bindings for the [YOURLS](http://yourls.org)
+[yourls-api][] is a JavaScript library that provides bindings for the [YOURLS][]
 API using JSONP.
 
 ## Connect
@@ -44,4 +52,7 @@ yourls.url.stats(callback, [context])
 If you want more information or examples of using this library please visit the
 project's homepage;
 
-<http://forchoon.com/projects/javascript/yourls-api/>
+http://neocotic.com/yourls-api
+
+[yourls]: http://yourls.org
+[yourls-api]: http://neocotic.com/yourls-api

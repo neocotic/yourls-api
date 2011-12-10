@@ -1,14 +1,12 @@
 /*!
- * YOURLS API v1.0.0
- * http://forchoon.com/projects/javascript/yourls-api/
- *
+ * yourls-api v1.0.0
+ * 
  * Copyright 2011, Alasdair Mercer
- * Licensed under the GPL Version 3 license.
+ * Freely distributable under the MIT license.
+ * 
+ * For all details and documentation:
+ * http://neocotic.com/yourls-api
  */
-
-/*jslint
-    browser: true, sloppy: true, nomen: true, maxerr: 50, indent: 4
-*/
 
 (function () {
     var api = '',
