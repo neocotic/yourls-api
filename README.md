@@ -11,48 +11,64 @@
 [yourls-api][] is a JavaScript library that provides bindings for the [YOURLS][]
 API using JSONP.
 
+The current release of [YOURLS][] does not provide official support for JSONP so
+this API cannot be used with it.
+
 ## Connect
 
-```
-yourls.connect(url, [credentials])
+``` javascript
+yourls.connect(url[, credentials])
 ```
 
 ## Shorten
 
-```
-yourls.shorten(url, [keyword], callback, [context])
+``` javascript
+yourls.shorten(url[, keyword], callback[, context])
 ```
 
 ## Stats
 
-```
-yourls.stats([filter], [limit], callback, [context])
+``` javascript
+yourls.stats([filter][, limit], callback[, context])
 ```
 
 ## URL
 
-```
+``` javascript
 yourls.url(url)
 ```
 
 ### Expand
 
-```
-yourls.url.expand(callback, [context])
+``` javascript
+yourls.url.expand(callback[, context])
 ```
 
 ### Stats
 
-```
-yourls.url.stats(callback, [context])
+``` javascript
+yourls.url.stats(callback[, context])
 ```
 
-## Further Information
+## Bugs
 
-If you want more information or examples of using this library please visit the
-project's homepage;
+If you have any problems with this library or would like to see the changes
+currently in development you can do so here;
+
+https://github.com/neocotic/yourls-api/issues
+
+## Questions?
+
+Take a look at `docs/yourls.html` to get a better understanding of what the code
+is doing.
+
+If that doesn't help, feel free to follow me on Twitter, [@neocotic][].
+
+However, if you want more information or examples of using this library please
+visit the project's homepage;
 
 http://neocotic.com/yourls-api
 
+[@neocotic]: https://twitter.com/#!/neocotic
 [yourls]: http://yourls.org
 [yourls-api]: http://neocotic.com/yourls-api

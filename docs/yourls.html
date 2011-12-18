@@ -1,0 +1,109 @@
+<!DOCTYPE html>  <html> <head>   <title>yourls.js</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               yourls.js             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>               <p><a href="http://neocotic.com/yourls-api">yourls-api</a> 1.0.0 <br />
+(c) 2011 Alasdair Mercer <br />
+Freely distributable under the MIT license. <br />
+For all details and documentation: <br />
+<a href="http://neocotic.com/yourls-api">http://neocotic.com/yourls-api</a></p>             </td>             <td class="code">               <div class="highlight"><pre><span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <h2>Private variables</h2>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="kd">var</span>
+    <span class="nx">api</span>    <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="nx">auth</span>   <span class="o">=</span> <span class="p">{},</span>
+    <span class="nx">yourls</span> <span class="o">=</span> <span class="nb">window</span><span class="p">.</span><span class="nx">yourls</span> <span class="o">=</span> <span class="p">{};</span>
+  <span class="nx">yourls</span><span class="p">.</span><span class="nx">__jsonp_callbacks</span> <span class="o">=</span> <span class="p">{};</span></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <h2>Private functions</h2>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>Convert the object provided in to a URL parameter string.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="kd">function</span> <span class="nx">paramify</span><span class="p">(</span><span class="nx">params</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="nx">key</span> <span class="k">in</span> <span class="nx">params</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">params</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">key</span><span class="p">))</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">params</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">!==</span> <span class="s1">&#39;undefined&#39;</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">str</span> <span class="o">+=</span> <span class="nx">key</span> <span class="o">+</span> <span class="s1">&#39;=&#39;</span> <span class="o">+</span> <span class="nx">params</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;&amp;&#39;</span><span class="p">;</span>
+        <span class="p">}</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nx">str</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/&amp;$/</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
+  <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <p>Send a JSONP request to the YOURLS API that calls the callback function
+with the context specified as <code>this</code>.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="kd">function</span> <span class="nx">jsonp</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="nx">callback</span><span class="p">,</span> <span class="nx">context</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span>
+      <span class="nx">id</span>     <span class="o">=</span> <span class="o">+</span><span class="k">new</span> <span class="nb">Date</span><span class="p">(),</span>
+      <span class="nx">script</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;script&#39;</span><span class="p">);</span>
+    <span class="k">while</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">yourls</span><span class="p">.</span><span class="nx">__jsonp_callbacks</span><span class="p">[</span><span class="nx">id</span><span class="p">]</span> <span class="o">!==</span> <span class="s1">&#39;undefined&#39;</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">id</span> <span class="o">+=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">();</span>
+    <span class="p">}</span>
+    <span class="nx">yourls</span><span class="p">.</span><span class="nx">__jsonp_callbacks</span><span class="p">[</span><span class="nx">id</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+      <span class="k">delete</span> <span class="nx">yourls</span><span class="p">.</span><span class="nx">__jsonp_callbacks</span><span class="p">[</span><span class="nx">id</span><span class="p">];</span>
+      <span class="nx">callback</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">context</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+    <span class="p">};</span>
+    <span class="nx">url</span> <span class="o">=</span> <span class="s1">&#39;?format=jsonp&amp;callback=&#39;</span> <span class="o">+</span>
+          <span class="nb">encodeURIComponent</span><span class="p">(</span><span class="s1">&#39;yourls.__jsonp_callbacks[&#39;</span> <span class="o">+</span> <span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39;]&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;&amp;&#39;</span> <span class="o">+</span>
+          <span class="nx">url</span><span class="p">;</span>
+    <span class="nx">url</span> <span class="o">+=</span> <span class="s1">&#39;&amp;&#39;</span> <span class="o">+</span> <span class="nx">paramify</span><span class="p">(</span><span class="nx">auth</span><span class="p">);</span>
+    <span class="nx">script</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s1">&#39;src&#39;</span><span class="p">,</span> <span class="nx">api</span> <span class="o">+</span> <span class="nx">url</span><span class="p">);</span>
+    <span class="nb">document</span><span class="p">.</span><span class="nx">getElementsByTagName</span><span class="p">(</span><span class="s1">&#39;head&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">].</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">script</span><span class="p">);</span>
+  <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <h2>Public functions</h2>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-7">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-7">&#182;</a>               </div>               <p>Store the URL and user credentials to be used to connect to the YOURLS
+API. <br />
+This won't validate the URL or credentials at any point; this is performed
+by each individual method.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nx">yourls</span><span class="p">.</span><span class="nx">connect</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="nx">credentials</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">api</span> <span class="o">=</span> <span class="nx">url</span><span class="p">;</span>
+    <span class="nx">auth</span> <span class="o">=</span> <span class="p">{};</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">credentials</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">credentials</span><span class="p">.</span><span class="nx">signature</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">auth</span><span class="p">.</span><span class="nx">signature</span> <span class="o">=</span> <span class="nx">credentials</span><span class="p">.</span><span class="nx">signature</span><span class="p">;</span>
+      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="nx">auth</span><span class="p">.</span><span class="nx">password</span> <span class="o">=</span> <span class="nx">credentials</span><span class="p">.</span><span class="nx">password</span><span class="p">;</span>
+        <span class="nx">auth</span><span class="p">.</span><span class="nx">username</span> <span class="o">=</span> <span class="nx">credentials</span><span class="p">.</span><span class="nx">username</span><span class="p">;</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+  <span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-8">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-8">&#182;</a>               </div>               <p>Retrieve the short URL for a long URL.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nx">yourls</span><span class="p">.</span><span class="nx">shorten</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="nx">keyword</span><span class="p">,</span> <span class="nx">callback</span><span class="p">,</span> <span class="nx">context</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">data</span> <span class="o">=</span> <span class="p">{</span>
+      <span class="nx">action</span> <span class="o">:</span> <span class="s1">&#39;shorturl&#39;</span><span class="p">,</span>
+      <span class="nx">url</span>    <span class="o">:</span> <span class="nx">url</span>
+    <span class="p">};</span>
+    <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">keyword</span> <span class="o">===</span> <span class="s1">&#39;function&#39;</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">callback</span> <span class="o">=</span> <span class="nx">keyword</span><span class="p">;</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+      <span class="nx">data</span><span class="p">.</span><span class="nx">keyword</span> <span class="o">=</span> <span class="nx">keyword</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="nx">jsonp</span><span class="p">(</span><span class="nx">paramify</span><span class="p">(</span><span class="nx">data</span><span class="p">),</span> <span class="nx">callback</span><span class="p">,</span> <span class="nx">context</span><span class="p">);</span>
+    <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+  <span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-9">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-9">&#182;</a>               </div>               <p>Retrieve the statistics for all the shortened URLs which can be optionally
+filtered.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nx">yourls</span><span class="p">.</span><span class="nx">stats</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">filter</span><span class="p">,</span> <span class="nx">limit</span><span class="p">,</span> <span class="nx">callback</span><span class="p">,</span> <span class="nx">context</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span>
+      <span class="nx">data</span>       <span class="o">=</span> <span class="p">{</span><span class="nx">action</span><span class="o">:</span> <span class="s1">&#39;stats&#39;</span><span class="p">},</span>
+      <span class="nx">filterType</span> <span class="o">=</span> <span class="k">typeof</span> <span class="nx">filter</span><span class="p">;</span>
+    <span class="k">switch</span> <span class="p">(</span><span class="nx">filterType</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">case</span> <span class="s1">&#39;number&#39;</span><span class="o">:</span>
+      <span class="nx">data</span><span class="p">.</span><span class="nx">limit</span> <span class="o">=</span> <span class="nx">filter</span><span class="p">;</span>
+      <span class="nx">callback</span> <span class="o">=</span> <span class="nx">limit</span><span class="p">;</span>
+      <span class="k">break</span><span class="p">;</span>
+    <span class="k">case</span> <span class="s1">&#39;function&#39;</span><span class="o">:</span>
+      <span class="nx">callback</span> <span class="o">=</span> <span class="nx">filter</span><span class="p">;</span>
+      <span class="k">break</span><span class="p">;</span>
+    <span class="k">default</span><span class="o">:</span>
+      <span class="nx">data</span><span class="p">.</span><span class="nx">filter</span> <span class="o">=</span> <span class="nx">filter</span><span class="p">;</span>
+      <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">limit</span> <span class="o">===</span> <span class="s1">&#39;function&#39;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">callback</span> <span class="o">=</span> <span class="nx">limit</span><span class="p">;</span>
+      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="nx">data</span><span class="p">.</span><span class="nx">limit</span> <span class="o">=</span> <span class="nx">limit</span><span class="p">;</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="nx">jsonp</span><span class="p">(</span><span class="nx">paramify</span><span class="p">(</span><span class="nx">data</span><span class="p">),</span> <span class="nx">callback</span><span class="p">,</span> <span class="nx">context</span><span class="p">);</span>
+    <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+  <span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-10">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-10">&#182;</a>               </div>               <p>The constructor for url objects. <br />
+Just creating an instance of a url doesn't fetch any data from the YOURLS
+API and you'll need to be explicit about what you want to do in order for
+that to happen.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nx">yourls</span><span class="p">.</span><span class="nx">url</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">url</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="k">this</span> <span class="k">instanceof</span> <span class="nx">yourls</span><span class="p">.</span><span class="nx">url</span><span class="p">))</span> <span class="k">return</span> <span class="k">new</span> <span class="nx">yourls</span><span class="p">.</span><span class="nx">url</span><span class="p">(</span><span class="nx">url</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">url</span> <span class="o">=</span> <span class="nx">url</span><span class="p">;</span>
+  <span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-11">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-11">&#182;</a>               </div>               <p>Retrieve the long URL for a short URL.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nx">yourls</span><span class="p">.</span><span class="nx">url</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">expand</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">callback</span><span class="p">,</span> <span class="nx">context</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">jsonp</span><span class="p">(</span><span class="nx">paramify</span><span class="p">({</span>
+      <span class="nx">action</span>   <span class="o">:</span> <span class="s1">&#39;expand&#39;</span><span class="p">,</span>
+      <span class="nx">shorturl</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">url</span>
+    <span class="p">}),</span> <span class="nx">callback</span><span class="p">,</span> <span class="nx">context</span><span class="p">);</span>
+    <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+  <span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-12">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-12">&#182;</a>               </div>               <p>Retrieve statistics for a single short URL.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nx">yourls</span><span class="p">.</span><span class="nx">url</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">stats</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">callback</span><span class="p">,</span> <span class="nx">context</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">jsonp</span><span class="p">(</span><span class="nx">paramify</span><span class="p">({</span>
+      <span class="nx">action</span>   <span class="o">:</span> <span class="s1">&#39;url-stats&#39;</span><span class="p">,</span>
+      <span class="nx">shorturl</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">url</span>
+    <span class="p">}),</span> <span class="nx">callback</span><span class="p">,</span> <span class="nx">context</span><span class="p">);</span>
+    <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+  <span class="p">};</span>
+
+<span class="p">}());</span>
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 
