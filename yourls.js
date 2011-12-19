@@ -4,15 +4,28 @@
 // For all details and documentation:  
 // <http://neocotic.com/yourls-api>
 
-(function () {
+(function (root) {
 
   // Private variables
   // -----------------
 
   var
-    api    = '',
-    auth   = {},
-    yourls = window.yourls = {};
+    // URL of YOURLS API stored by `yourls.connect`.
+    api            = '',
+    // Authentication credentials stored by `yourls.connect`.
+    auth           = {},
+    // Save the previous value of the `yourls` variable.
+    previousYourls = root.yourls;
+
+  // Public variables
+  // ----------------
+
+  // API to be exposed publicly later on.
+  var yourls = {};
+  // Callback functions for activate JSONP requests.  
+  // Functions should removed once they have been called.  
+  // This property must be public since the callback is called in global
+  // context.
   yourls.__jsonp_callbacks = {};
 
   // Private functions
@@ -141,4 +154,21 @@
     return this;
   };
 
-}());
+  // Run yourls.js in *noConflict* mode, returning the `yourls` variable to its
+  // previous owner.  
+  // Returns a reference to `yourls`.
+  yourls.noConflict = function () {
+    root.yourls = previousYourls;
+    return this;
+  };
+
+  // Export `yourls` for CommonJS.
+  if (typeof define === 'function' && define.amd) {
+    define('yourls', function () {
+      return yourls;
+    });
+  } else {
+    root.yourls = yourls;
+  }
+
+}(this));
