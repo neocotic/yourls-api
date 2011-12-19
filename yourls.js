@@ -28,6 +28,12 @@
   // context.
   yourls.__jsonp_callbacks = {};
 
+  // Public constants
+  // ----------------
+
+  // Current version of `yourls`.
+  yourls.VERSION = '1.0.0';
+
   // Private functions
   // -----------------
 
@@ -65,8 +71,8 @@
     document.getElementsByTagName('head')[0].appendChild(script);
   }
 
-  // Public functions
-  // ----------------
+  // Primary functions
+  // -----------------
 
   // Store the URL and user credentials to be used to connect to the YOURLS
   // API.  
@@ -127,6 +133,9 @@
     return this;
   };
 
+  // URL functions
+  // -------------
+
   // The constructor for url objects.  
   // Just creating an instance of a url doesn't fetch any data from the YOURLS
   // API and you'll need to be explicit about what you want to do in order for
@@ -153,6 +162,9 @@
     }), callback, context);
     return this;
   };
+
+  // Utility functions
+  // -----------------
 
   // Run yourls.js in *noConflict* mode, returning the `yourls` variable to its
   // previous owner.  

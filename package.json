@@ -2,13 +2,13 @@
   "name"        : "yourls",
   "description" : "JavaScript bindings for the YOURLS API",
   "version"     : "1.0.0",
-  "homepage"    : "http://neocotic.com/yourls.js",
-  "bugs"        : {"url"   : "https://github.com/neocotic/yourls.js/issues"},
+  "homepage"    : "http://neocotic.com/yourls-api",
+  "bugs"        : {"url"   : "https://github.com/neocotic/yourls-api/issues"},
   "author"      : "Alasdair Mercer <mercer.alasdair@gmail.com> (http://neocotic.com)",
   "licenses"    : [{"type" : "MIT",
-                    "url"  : "https://github.com/neocotic/yourls.js/raw/master/LICENSE.md"}],
+                    "url"  : "https://github.com/neocotic/yourls-api/raw/master/LICENSE.md"}],
   "keywords"    : ["yourls", "url", "shortener", "jsonp"],
   "repository"  : {"type"  : "git",
-                   "url"   : "git://github.com/neocotic/yourls.js.git"},
+                   "url"   : "git://github.com/neocotic/yourls-api.git"},
   "main"        : "yourls.js"
 }

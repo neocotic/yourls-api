@@ -23,13 +23,13 @@ yourls.connect(url[, credentials])
 ## Shorten
 
 ``` javascript
-yourls.shorten(url[, keyword], callback[, context])
+yourls.shorten(url[, keyword], callback(data)[, context])
 ```
 
 ## Stats
 
 ``` javascript
-yourls.stats([filter][, limit], callback[, context])
+yourls.stats([filter][, limit], callback(data)[, context])
 ```
 
 ## URL
@@ -41,13 +41,20 @@ yourls.url(url)
 ### Expand
 
 ``` javascript
-yourls.url.expand(callback[, context])
+yourls.url.expand(callback(data)[, context])
 ```
 
 ### Stats
 
 ``` javascript
-yourls.url.stats(callback[, context])
+yourls.url.stats(callback(data)[, context])
+```
+
+## Miscellaneous
+
+``` javascript
+yourls.noConflict()
+yourls.VERSION
 ```
 
 ## Bugs
