@@ -11,8 +11,7 @@
 [yourls-api][] is a JavaScript library that provides bindings for the [YOURLS][]
 API using JSONP.
 
-The current release of [YOURLS][] does not provide official support for JSONP so
-this API cannot be used with it.
+This library is only compatible with [YOURLS][] version **1.5.1** or newer.
 
 ## Connect
 
