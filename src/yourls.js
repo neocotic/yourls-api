@@ -49,7 +49,7 @@ var YOURLS = function() {
    * @public
    * @type {string}
    */
-  this.version = '1.0.0'
+  this.version = '2.0.0'
 }
 
 /**
