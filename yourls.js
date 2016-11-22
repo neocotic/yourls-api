@@ -1,7 +1,7 @@
-// [yourls-api](http://neocotic.com/yourls-api) 1.0.0  
-// (c) 2011 Alasdair Mercer  
-// Freely distributable under the MIT license.  
-// For all details and documentation:  
+// [yourls-api](http://neocotic.com/yourls-api) 1.0.0
+// (c) 2011 Alasdair Mercer
+// Freely distributable under the MIT license.
+// For all details and documentation:
 // <http://neocotic.com/yourls-api>
 
 (function (root) {
@@ -22,8 +22,8 @@
 
   // API to be exposed publicly later on.
   var yourls = {};
-  // Callback functions for activate JSONP requests.  
-  // Functions should removed once they have been called.  
+  // Callback functions for activate JSONP requests.
+  // Functions should removed once they have been called.
   // This property must be public since the callback is called in global
   // context.
   yourls.__jsonp_callbacks = {};
@@ -75,7 +75,7 @@
   // -----------------
 
   // Store the URL and user credentials to be used to connect to the YOURLS
-  // API.  
+  // API.
   // This won't validate the URL or credentials at any point; this is performed
   // by each individual method.
   yourls.connect = function (url, credentials) {
@@ -136,7 +136,7 @@
   // URL functions
   // -------------
 
-  // The constructor for url objects.  
+  // The constructor for url objects.
   // Just creating an instance of a url doesn't fetch any data from the YOURLS
   // API and you'll need to be explicit about what you want to do in order for
   // that to happen.
@@ -167,7 +167,7 @@
   // -----------------
 
   // Run yourls.js in *noConflict* mode, returning the `yourls` variable to its
-  // previous owner.  
+  // previous owner.
   // Returns a reference to `yourls`.
   yourls.noConflict = function () {
     root.yourls = previousYourls;
