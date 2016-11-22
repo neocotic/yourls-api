@@ -1,0 +1,33 @@
+{
+  "name": "yourls-api",
+  "version": "1.0.0",
+  "description": "JavaScript bindings for the YOURLS API",
+  "homepage": "https://github.com/neocotic/yourls-api",
+  "authors": [
+    {
+      "name": "Alasdair Mercer",
+      "email": "mercer.alasdair@gmail.com",
+      "homepage": "https://neocotic.com"
+    }
+  ],
+  "license": "MIT",
+  "keywords": [
+    "yourls",
+    "url",
+    "shortener",
+    "api",
+    "jsonp"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/neocotic/yourls-api.git"
+  },
+  "main": "yourls.js",
+  "ignore": [
+    ".*",
+    "AUTHORS.md",
+    "CHANGES.md",
+    "package.json",
+    "README.md"
+  ]
+}
