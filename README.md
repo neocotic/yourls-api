@@ -54,7 +54,8 @@ yourls.url(url).stats(callback(result, response))
 ## Miscellaneous
 
 ``` javascript
-yourls.version
+yourls.version(callback(result, response))
+yourls.VERSION
 ```
 
 ## Bugs

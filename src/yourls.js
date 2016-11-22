@@ -46,10 +46,13 @@ var YOURLS = function() {
   /**
    * The current version of <code>yourls</code>.
    *
+   * This is <b>not</b> the same as the version of YOURLS that is being connected to. The {@link YOURLS#version}
+   * function should be used to provide that information.
+   *
    * @public
    * @type {string}
    */
-  this.version = '2.0.0'
+  this.VERSION = '2.0.0'
 }
 
 /**
@@ -177,6 +180,21 @@ YOURLS.prototype.stats = function(filter, limit, callback) {
  */
 YOURLS.prototype.url = function(url) {
   return url ? new URL(url) : null
+}
+
+/**
+ * Retrieves the version of the connected YOURLS API.
+ *
+ * @param {Function} callback - the callback function to be called with the result
+ * @return {YOURLS} A reference to this {@link YOURLS} for chaining purposes.
+ * @public
+ */
+YOURLS.prototype.version = function(callback) {
+  var data = { action: 'version' }
+
+  jsonp(data, 'version', callback)
+
+  return this
 }
 
 /**
