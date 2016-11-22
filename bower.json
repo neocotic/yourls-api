@@ -22,11 +22,13 @@
     "type": "git",
     "url": "https://github.com/neocotic/yourls-api.git"
   },
-  "main": "yourls.js",
+  "main": "dist/yourls.js",
   "ignore": [
     ".*",
+    "src/",
     "AUTHORS.md",
     "CHANGES.md",
+    "Gruntfile.js",
     "package.json",
     "README.md"
   ]

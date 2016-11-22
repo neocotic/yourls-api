@@ -13,22 +13,24 @@ API using JSONP.
 
 This library is only compatible with [YOURLS][] version **1.5.1** or newer.
 
-## Connect
+## Connection
 
 ``` javascript
 yourls.connect(url[, credentials])
+yourls.disconnect()
 ```
 
 ## Shorten
 
 ``` javascript
-yourls.shorten(url[, keyword], callback(data)[, context])
+yourls.shorten(url[, descriptor], callback(data))
 ```
 
 ## Stats
 
 ``` javascript
-yourls.stats([filter][, limit], callback(data)[, context])
+yourls.stats([filter][, limit], callback(data))
+yourls.db.stats(callback(data))
 ```
 
 ## URL
@@ -40,20 +42,19 @@ yourls.url(url)
 ### Expand
 
 ``` javascript
-yourls.url.expand(callback(data)[, context])
+yourls.url(url).expand(callback(data))
 ```
 
 ### Stats
 
 ``` javascript
-yourls.url.stats(callback(data)[, context])
+yourls.url(url).stats(callback(data))
 ```
 
 ## Miscellaneous
 
 ``` javascript
-yourls.noConflict()
-yourls.VERSION
+yourls.version
 ```
 
 ## Bugs

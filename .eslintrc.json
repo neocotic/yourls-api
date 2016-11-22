@@ -1,0 +1,15 @@
+{
+  "extends": "skelp/v3/es5",
+  "env": {
+    "browser": true
+  },
+  "parserOptions": {
+    "sourceType": "module"
+  },
+  "rules": {
+    "max-params": [
+      "error",
+      4
+    ]
+  }
+}
