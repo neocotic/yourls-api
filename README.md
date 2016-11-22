@@ -23,14 +23,14 @@ yourls.disconnect()
 ## Shorten
 
 ``` javascript
-yourls.shorten(url[, descriptor], callback(data))
+yourls.shorten(url[, descriptor], callback(result, response))
 ```
 
 ## Stats
 
 ``` javascript
-yourls.stats([filter][, limit], callback(data))
-yourls.db.stats(callback(data))
+yourls.stats([filter][, limit], callback(result, response))
+yourls.db.stats(callback(result, response))
 ```
 
 ## URL
@@ -42,13 +42,13 @@ yourls.url(url)
 ### Expand
 
 ``` javascript
-yourls.url(url).expand(callback(data))
+yourls.url(url).expand(callback(result, response))
 ```
 
 ### Stats
 
 ``` javascript
-yourls.url(url).stats(callback(data))
+yourls.url(url).stats(callback(result, response))
 ```
 
 ## Miscellaneous

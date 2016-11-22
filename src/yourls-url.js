@@ -52,7 +52,7 @@ URL.prototype.expand = function(callback) {
     shorturl: this.url
   }
 
-  jsonp(data, callback)
+  jsonp(data, [ 'keyword', 'longurl', 'shorturl' ], callback)
 
   return this
 }
@@ -70,7 +70,7 @@ URL.prototype.stats = function(callback) {
     shorturl: this.url
   }
 
-  jsonp(data, callback)
+  jsonp(data, 'link', callback)
 
   return this
 }

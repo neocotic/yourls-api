@@ -58,25 +58,79 @@ function generateCallbackId() {
 }
 
 /**
+ * Extracts the values of the properties with the specified <code>names</code> from the <code>response</code> provided
+ * and returns them in a single result.
+ *
+ * If <code>names</code> is a string or only contains a single string, only the value for that named property will be
+ * returned. Otherwise, an object containing the key/value pairs for each named property will be returned.
+ *
+ * If <code>response</code> is <code>null</code> this function will return <code>null</code>.
+ *
+ * @param {string|string[]} names - the names of the <code>response</code> properties whose values are to be returned as
+ * the result
+ * @param {Object} response - the YOURLS API response
+ * @return {*} The result extracted from <code>response</code>.
+ * @private
+ */
+function getResult(names, response) {
+  names = Object.prototype.toString.call(names) === '[object Array]' ? names : [ names ]
+
+  var i
+  var name
+  var result = null
+
+  if (!response) {
+    return result
+  }
+
+  if (names.length === 1) {
+    result = response[names[0]]
+  } else {
+    result = {}
+
+    for (i = 0; i < names.length; i++) {
+      name = names[i]
+
+      if (typeof response[name] !== 'undefined') {
+        result[name] = response[name]
+      }
+    }
+  }
+
+  return result
+}
+
+/**
  * Sends a JSONP request to the connected YOURLS API with the <code>data</code> provided which should, in turn, call the
  * specified <code>callback</code> with the result.
+ *
+ * If the request is successful, <code>callback</code> will be passed the value of the named properties from the
+ * response. If <code>resultNames</code> is a string or only contains a single string, only the value for that named
+ * property will be passed as the first argument. Otherwise, an object containing the key/value pairs for each named
+ * property will be passed as the first argument. The actual response will always be passed as the second argument.
  *
  * Due to the nature of JSONP, all information will be included in the URL of the request. This includes
  * <code>data</code> as well as <b>any credentials</b> used to authenticate with the API. You have been warned.
  *
  * @param {Object} data - the data to be sent
+ * @param {string|string[]} resultNames - the names of the response properties whose values are to be passed to
+ * <code>callback</code> as the first argument
  * @param {Function} callback - the function to be called with the result
  * @return {void}
  * @protected
  */
-export function jsonp(data, callback) {
+export function jsonp(data, resultNames, callback) {
   var api = API.fetch()
   var id = generateCallbackId()
   var script = document.createElement('script')
 
-  callbackHolder[id] = function() {
+  callbackHolder[id] = function(response) {
+    var result = getResult(resultNames, response)
+
     delete callbackHolder[id]
-    callback.apply(null, arguments)
+    script.parentNode.removeChild(script)
+
+    callback(result, response)
   }
 
   var target = api.url + '?' + paramify({ callback: callbackHolderKey + '[' + id + ']', format: 'jsonp' })

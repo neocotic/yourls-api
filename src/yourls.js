@@ -118,7 +118,7 @@ YOURLS.prototype.shorten = function(url, descriptor, callback) {
     data.title = descriptor.title
   }
 
-  jsonp(data, callback)
+  jsonp(data, [ 'shorturl', 'title', 'url' ], callback)
 
   return this
 }
@@ -158,7 +158,7 @@ YOURLS.prototype.stats = function(filter, limit, callback) {
   data.filter = filter
   data.limit = limit
 
-  jsonp(data, callback)
+  jsonp(data, 'stats', callback)
 
   return this
 }

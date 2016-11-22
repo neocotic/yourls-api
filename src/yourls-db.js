@@ -42,7 +42,7 @@ export function DB() {
 DB.prototype.stats = function(callback) {
   var data = { action: 'db-stats' }
 
-  jsonp(data, callback)
+  jsonp(data, 'db-stats', callback)
 
   return this
 }
