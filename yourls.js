@@ -82,7 +82,10 @@
     api = url;
     auth = {};
     if (credentials) {
-      if (credentials.signature) {
+      if (credentials.timestamp) {
+        auth.signature = credentials.signature;
+        auth.timestamp = credentials.timestamp;
+      } else if (credentials.signature) {
         auth.signature = credentials.signature;
       } else {
         auth.password = credentials.password;
