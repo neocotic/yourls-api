@@ -1,14 +1,45 @@
 {
-  "name"        : "yourls",
-  "description" : "JavaScript bindings for the YOURLS API",
-  "version"     : "1.0.0",
-  "homepage"    : "http://neocotic.com/yourls-api",
-  "bugs"        : {"url"   : "https://github.com/neocotic/yourls-api/issues"},
-  "author"      : "Alasdair Mercer <mercer.alasdair@gmail.com> (http://neocotic.com)",
-  "licenses"    : [{"type" : "MIT",
-                    "url"  : "https://github.com/neocotic/yourls-api/raw/master/LICENSE.md"}],
-  "keywords"    : ["yourls", "url", "shortener", "jsonp"],
-  "repository"  : {"type"  : "git",
-                   "url"   : "git://github.com/neocotic/yourls-api.git"},
-  "main"        : "yourls.js"
+  "name": "yourls-api",
+  "version": "2.0.0",
+  "description": "Bindings for the YOURLS API",
+  "homepage": "https://github.com/neocotic/yourls-api",
+  "bugs": {
+    "url": "https://github.com/neocotic/yourls-api/issues"
+  },
+  "author": {
+    "name": "Alasdair Mercer",
+    "email": "mercer.alasdair@gmail.com",
+    "url": "https://neocotic.com"
+  },
+  "license": "MIT",
+  "keywords": [
+    "yourls",
+    "url",
+    "shortener",
+    "api",
+    "jsonp"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/neocotic/yourls-api.git"
+  },
+  "devDependencies": {
+    "eslint-config-skelp": "^0.1.5",
+    "grunt": "^1.0.1",
+    "grunt-cli": "^1.2.0",
+    "grunt-contrib-clean": "^1.0.0",
+    "grunt-contrib-watch": "^1.0.0",
+    "grunt-eslint": "^19.0.0",
+    "grunt-rollup": "^1.0.1",
+    "rollup-plugin-commonjs": "^5.0.5",
+    "rollup-plugin-node-resolve": "^2.0.0",
+    "rollup-plugin-uglify": "^1.0.1",
+    "semver": "^5.3.0"
+  },
+  "main": "dist/yourls.js",
+  "jsnext:main": "src/yourls.js",
+  "scripts": {
+    "build": "grunt build",
+    "test": "grunt test"
+  }
 }
