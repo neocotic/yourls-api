@@ -668,14 +668,14 @@
   };
 
   /**
-   * Retrieves the statistics for all URLs shortened by the current user, if authenticating with a username/password
-   * combination, otherwise all shortened URLs.
+   * Retrieves the statistics for all shortened URLs.
    *
    * Optionally, <code>criteria</code> can be provided to also include a refined set of links in the result. This includes
    * filter, which provides limited control over the sorting, as well as limit and start, which allow for pagination. If
    * <code>criteria</code> is a number, it will be treated as the limit.
    *
-   * No links will be included in the result unless a limit is specified that is greater than zero.
+   * No links will be included in the result unless a limit is specified that is greater than zero. In that case, this
+   * method would effectively be doing the same as {@link DB#stats}.
    *
    * @param {YOURLS~SearchCriteria|number} [criteria] - the optional criteria (or limit, if it's a number) to be used to
    * search for links to be included in the result

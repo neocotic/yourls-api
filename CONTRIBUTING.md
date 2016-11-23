@@ -1,6 +1,6 @@
 # Contributing
 
-If you have any questions about [yourls-api](https://github.com/neocotic/yourls-api) please feel free to
+If you have any questions about [YOURLS API](https://github.com/neocotic/yourls-api) please feel free to
 [raise an issue](https://github.com/neocotic/yourls-api/issues/new).
 
 Please [search existing issues](https://github.com/neocotic/yourls-api/issues) for the same feature and/or issue before
