@@ -49,7 +49,7 @@ module.exports = function(grunt) {
     ' * SOFTWARE.',
     ' */'
   ].join('\n')
-  var bannerSmall = '/*! yourls-api v<%= pkg.version %> | (C) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %> | MIT License */'
+  var bannerSmall = '/*! YOURLS API v<%= pkg.version %> | (C) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %> | MIT License */'
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),

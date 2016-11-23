@@ -21,6 +21,7 @@
  */
 
 import { API } from '../api'
+import { isArray } from '../util/array'
 import { paramify } from './paramify'
 
 /**
@@ -73,7 +74,7 @@ function generateCallbackId() {
  * @private
  */
 function getResult(names, response) {
-  names = Object.prototype.toString.call(names) === '[object Array]' ? names : [ names ]
+  names = isArray(names) ? names : [ names ]
 
   var i
   var name
