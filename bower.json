@@ -28,6 +28,7 @@
     "src/",
     "AUTHORS.md",
     "CHANGES.md",
+    "CONTRIBUTING.md",
     "Gruntfile.js",
     "package.json",
     "README.md"
