@@ -222,14 +222,27 @@ YOURLS.prototype.url = function(url) {
 /**
  * Retrieves the version of the connected YOURLS API.
  *
+ * Optionally, <code>db</code> can be passed to indicate that the YOURLS database version should also be included in the
+ * result.
+ *
+ * @param {boolean} [db] - <code>true</code> to include the database version; otherwise <code>false</code>
  * @param {Function} callback - the callback function to be called with the result
  * @return {YOURLS} A reference to this {@link YOURLS} for chaining purposes.
  * @public
  */
-YOURLS.prototype.version = function(callback) {
+YOURLS.prototype.version = function(db, callback) {
   var data = { action: 'version' }
 
-  jsonp(data, 'version', callback)
+  if (typeof db === 'function') {
+    callback = db
+    db = null
+  }
+
+  if (db != null) {
+    data.db = Number(db)
+  }
+
+  jsonp(data, [ 'db_version', 'version' ], callback)
 
   return this
 }
