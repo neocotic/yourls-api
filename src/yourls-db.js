@@ -20,29 +20,30 @@
  * SOFTWARE.
  */
 
-import { jsonp } from './request/jsonp'
+import { Requestor } from './request/requestor'
 
 /**
  * Provides the ability to lookup information related to the YOURLS database.
  *
  * @constructor
+ * @extends Requestor
  * @protected
  */
-export function DB() {
-  // Do nothing
-}
+export var DB = Requestor.extend({
 
-/**
- * Retrieves the statistics for this {@link DB}.
- *
- * @param {Function} callback - the callback function to be called with the result
- * @return {DB} A reference to this {@link DB} for chaining purposes.
- * @public
- */
-DB.prototype.stats = function(callback) {
-  var data = { action: 'db-stats' }
+  /**
+   * Retrieves the statistics for this {@link DB}.
+   *
+   * @param {Function} callback - the callback function to be called with the result
+   * @return {DB} A reference to this {@link DB} for chaining purposes.
+   * @public
+   */
+  stats: function(callback) {
+    var data = { action: 'db-stats' }
 
-  jsonp(data, 'db-stats', callback)
+    this.sendRequest(data, 'db-stats', callback)
 
-  return this
-}
+    return this
+  }
+
+})

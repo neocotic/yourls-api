@@ -20,42 +20,9 @@
  * SOFTWARE.
  */
 
-/**
- * The singleton {@link API} instance which is privatized to prevent leaking credentials.
- *
- * @private
- * @type {API}
- */
-var instance = null
+import Oopsy from 'oopsy'
 
-/**
- * Sanitizes the specified <code>credentials</code> by ensuring that only valid properties are present and only when
- * appropriate.
- *
- * This function does not modify <code>credentials</code> and instead creates a new object with the sanitized
- * properties.
- *
- * @param {API~Credentials} credentials - the credentials to be sanitized (may be <code>null</code>)
- * @return {API~Credentials} A sanitized version of <code>credentials</code> or <code>null</code> if
- * <code>credentials</code> is <code>null</code>.
- * @private
- */
-function sanitizeCredentials(credentials) {
-  if (!credentials) {
-    return null
-  }
-
-  var result = {}
-  if (credentials.signature) {
-    result.signature = credentials.signature
-    result.timestamp = credentials.timestamp
-  } else {
-    result.password = credentials.password
-    result.username = credentials.username
-  }
-
-  return result
-}
+import { extend } from './util/extend'
 
 /**
  * Contains information on how to connect to and authenticate with a YOURLS server.
@@ -63,10 +30,12 @@ function sanitizeCredentials(credentials) {
  * @param {string} [url=''] - the URL for the YOURLS server
  * @param {API~Credentials} [credentials] - the credentials to be used to authenticate with the YOURLS API (may be
  * <code>null</code>)
+ * @param {API~Options} [options] - the options to be used to send requests to the YOURLS server (may be
+ * <code>null</code>)
  * @protected
  * @constructor
  */
-export function API(url, credentials) {
+export var API = Oopsy.extend(function(url, credentials, options) {
   /**
    * The URL of the YOURLS server.
    *
@@ -82,42 +51,97 @@ export function API(url, credentials) {
    * @public
    * @type {API~Credentials}
    */
-  this.credentials = sanitizeCredentials(credentials)
-}
+  this.credentials = API._sanitizeCredentials(credentials)
+  /**
+   * The options to be used to send requests to the YOURLS server.
+   *
+   * @public
+   * @type {API~Options}
+   */
+  this.options = API._sanitizeOptions(options)
+}, null, {
 
-/**
- * Destroys the singleton instance of {@link API}.
- *
- * @return {void}
- * @public
- * @static
- */
-API.clear = function() {
-  instance = null
-}
+  /**
+   * The default options to be used.
+   *
+   * @protected
+   * @static
+   * @type {API~Options}
+   */
+  defaultOptions: {
+    format: 'jsonp',
+    method: 'GET'
+  },
 
-/**
- * Retrieves the singleton instance of {@link API}.
- *
- * This function will return <code>null</code> unless an instance is currently stored.
- *
- * @return {API} The connected {@link API} or <code>null</code> if none exists.
- * @public
- * @static
- */
-API.fetch = function() {
-  return instance
-}
+  /**
+   * The singleton {@link API} instance which is privatized to prevent leaking credentials.
+   *
+   * @public
+   * @static
+   * @type {API}
+   */
+  instance: null,
 
-/**
- * Stores this {@link API} as the singleton, potentially replacing the existing instance.
- *
- * @return {void}
- * @public
- */
-API.prototype.store = function() {
-  instance = this
-}
+  /**
+   * Sanitizes the specified <code>credentials</code> by ensuring that only valid properties are present and only when
+   * appropriate.
+   *
+   * This method does not modify <code>credentials</code> and instead creates a new object with the sanitized
+   * properties.
+   *
+   * @param {API~Credentials} credentials - the credentials to be sanitized (may be <code>null</code>)
+   * @return {API~Credentials} A sanitized version of <code>credentials</code> or <code>null</code> if
+   * <code>credentials</code> is <code>null</code>.
+   * @private
+   * @static
+   */
+  _sanitizeCredentials: function(credentials) {
+    if (!credentials) {
+      return null
+    }
+
+    var result = {}
+    if (credentials.signature) {
+      result.signature = credentials.signature
+      result.timestamp = credentials.timestamp
+    } else {
+      result.password = credentials.password
+      result.username = credentials.username
+    }
+
+    return result
+  },
+
+  /**
+   * Sanitizes the specified <code>options</code> by ensuring that only valid properties are present and in the correct
+   * format.
+   *
+   * This method does not modify <code>options</code> and instead creates a new object with the sanitized properties and
+   * default values will be used for missing options.
+   *
+   * @param {API~Options} options - the options to be sanitized (may be <code>null</code>)
+   * @return {API~Options} A sanitized version of <code>options</code> which will contain only default values if
+   * <code>options</code> is <code>null</code>.
+   * @private
+   * @static
+   */
+  _sanitizeOptions: function(options) {
+    var result = extend({}, API.defaultOptions)
+    if (!options) {
+      return result
+    }
+
+    if (options.format) {
+      result.format = options.format.toLowerCase()
+    }
+    if (options.method) {
+      result.method = options.method.toUpperCase()
+    }
+
+    return result
+  }
+
+})
 
 /**
  * The credentials to be used to authenticate with a private YOURLS API.
@@ -135,4 +159,16 @@ API.prototype.store = function() {
  * @property {string} [username] - The name of the user to be authenticated.
  * @property {string} [signature] - The signature token to be used for passwordless authentication with the YOURLS API.
  * @property {number|string} [timestamp] - The optional timestamp to limit the <code>signature</code> token.
+ */
+
+/**
+ * The options that determine how requests are sent to the YOURLS server.
+ *
+ * If the request <code>format</code> does not support the HTTP <code>method</code>, requests will not be sent and an
+ * error will be thrown when such attempts occur.
+ *
+ * @typedef {Object} API~Options
+ * @property {string} [format="jsonp"] - The format in which requests are sent (either <code>"json"</code> or
+ * <code>"jsonp"</code>).
+ * @property {string} [method="GET"] - The HTTP method to be used for requests.
  */

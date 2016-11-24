@@ -21,14 +21,29 @@
  */
 
 /**
- * Returns whether the specified <code>obj</code> is an array.
+ * Extends the specified <code>target</code> object with the properties in each of the <code>sources</code> provided.
  *
- * This method will use the native <code>Array.isArray</code>, if available.
+ * Any of the <code>sources</code> that are <code>null</code> will simply be ignored.
  *
- * @param {*} obj - the object to be checked (may be <code>null</code>)
- * @return {boolean} <code>true</code> if <code>obj</code> is an array; otherwise <code>false</code>.
+ * @param {Object} target - the target object which should be extended
+ * @param {...Object} [sources] - the source objects whose properties are to be copied onto <code>target</code>
+ * @return {Object} A reference to <code>target</code>.
  * @protected
  */
-export function isArray(obj) {
-  return Array.isArray ? Array.isArray(obj) : Object.prototype.toString.call(obj) === '[object Array]'
+export function extend(target, sources) {
+  sources = Array.prototype.slice.call(arguments, 1)
+
+  for (var i = 0, length = sources.length, property, source; i < length; i++) {
+    source = sources[i]
+
+    if (source) {
+      for (property in source) {
+        if (Object.prototype.hasOwnProperty.call(source, property)) {
+          target[property] = source[property]
+        }
+      }
+    }
+  }
+
+  return target
 }

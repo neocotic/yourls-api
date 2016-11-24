@@ -23,40 +23,8 @@
 import { API } from './api'
 import { DB } from './yourls-db'
 import { isArray } from './util/array'
-import { jsonp } from './request/jsonp'
+import { Requestor } from './request/requestor'
 import { URL } from './yourls-url'
-
-/**
- * Sanitizes the result of {@link YOURLS#stats} so that it's more usable in application code by transforming the links
- * from an object mapping into an array.
- *
- * This function simply returns <code>result</code> if it is <code>null</code>, has no links property or one that is
- * already an array (future-proofing).
- *
- * @param {Object} result - the result to be sanitized (may be <code>null</code>)
- * @param {Object} [result.links] - the links to be transformed into an array (may be <code>null</code>)
- * @return {Object} The modified <code>result</code> or <code>null</code> if <code>result</code> is <code>null</code>.
- * @private
- */
-function sanitizeStatsResult(result) {
-  // Future-proofing by sanitizing links *only* when not already an array
-  if (!result || !result.links || isArray(result.links)) {
-    return result
-  }
-
-  var index = 1
-  var link
-  var links = []
-
-  while ((link = result.links['link_' + index]) != null) {
-    links.push(link)
-    index++
-  }
-
-  result.links = links
-
-  return result
-}
 
 /**
  * Provides the ability to connect to YOURLS servers and perform read/write operations via the API that they expose.
@@ -65,9 +33,12 @@ function sanitizeStatsResult(result) {
  * the URL of the YOURLS server and any credentials required to authenticate with its API (only required when private).
  *
  * @constructor
+ * @extends Requestor
  * @protected
  */
-var YOURLS = function() {
+var YOURLS = Requestor.extend(function() {
+  YOURLS.super_.call(this)
+
   /**
    * Provides information on the YOURLS {@link DB}.
    *
@@ -79,173 +50,211 @@ var YOURLS = function() {
   /**
    * The current version of <code>yourls</code>.
    *
-   * This is <b>not</b> the same as the version of YOURLS that is being connected to. The {@link YOURLS#version}
-   * function should be used to provide that information.
+   * This is <b>not</b> the same as the version of YOURLS that is being connected to. The {@link YOURLS#version} method
+   * should be used to provide that information.
    *
    * @public
    * @type {string}
    */
   this.VERSION = '2.0.0'
-}
+}, {
 
-/**
- * Stores the specified information to be used later to connect to and authenticate with a YOURLS server.
- *
- * @param {string} [url=''] - the URL for the YOURLS server
- * @param {API~Credentials} [credentials] - the credentials to be used to authenticate with the YOURLS API (may be
- * <code>null</code>)
- * @return {YOURLS} A reference to this {@link YOURLS} for chaining purposes.
- * @public
- */
-YOURLS.prototype.connect = function(url, credentials) {
-  var api = new API(url, credentials)
-  api.store()
+  /**
+   * Stores the specified information to be used later to connect to and authenticate with a YOURLS server.
+   *
+   * @param {string} [url=''] - the URL for the YOURLS server
+   * @param {API~Credentials} [credentials] - the credentials to be used to authenticate with the YOURLS API (may be
+   * <code>null</code>)
+   * @param {API~Options} [options] - the options to be used to send requests to the YOURLS server (may be
+   * <code>null</code>)
+   * @return {YOURLS} A reference to this {@link YOURLS} for chaining purposes.
+   * @public
+   */
+  connect: function(url, credentials, options) {
+    API.instance = new API(url, credentials, options)
 
-  return this
-}
+    return this
+  },
 
-/**
- * Clears any information that may have been previously stored for connecting to and authenticating with a YOURLS
- * server.
- *
- * @return {YOURLS} A reference to this {@link YOURLS} for chaining purposes.
- * @public
- */
-YOURLS.prototype.disconnect = function() {
-  API.clear()
+  /**
+   * Clears any information that may have been previously stored for connecting to and authenticating with a YOURLS
+   * server.
+   *
+   * @return {YOURLS} A reference to this {@link YOURLS} for chaining purposes.
+   * @public
+   */
+  disconnect: function() {
+    API.instance = null
 
-  return this
-}
+    return this
+  },
 
-/**
- * Creates a short URL for the specified long <code>url</code>.
- *
- * Optionally, a <code>descriptor</code> can be provided to specify a keyword and/or title for the short URL that is to
- * be created. If a keyword is specified, it must be available and, if not, the YOURLS server will generate a unique
- * keyword. If <code>descriptor</code> is a string, it will be treated as the keyword.
- *
- * @param {string} url - the long URL to be shortened
- * @param {YOURLS~UrlDescriptor|string} [descriptor] - the optional descriptor (or keyword, if it's a string) to be used
- * for the short URL
- * @param {Function} callback - the callback function to be called with the result
- * @return {YOURLS} A reference to this {@link YOURLS} for chaining purposes.
- * @public
- */
-YOURLS.prototype.shorten = function(url, descriptor, callback) {
-  var data = {
-    action: 'shorturl',
-    url: url
+  /**
+   * Creates a short URL for the specified long <code>url</code>.
+   *
+   * Optionally, a <code>descriptor</code> can be provided to specify a keyword and/or title for the short URL that is
+   * to be created. If a keyword is specified, it must be available and, if not, the YOURLS server will generate a
+   * unique keyword. If <code>descriptor</code> is a string, it will be treated as the keyword.
+   *
+   * @param {string} url - the long URL to be shortened
+   * @param {YOURLS~UrlDescriptor|string} [descriptor] - the optional descriptor (or keyword, if it's a string) to be
+   * used for the short URL
+   * @param {Function} callback - the callback function to be called with the result
+   * @return {YOURLS} A reference to this {@link YOURLS} for chaining purposes.
+   * @public
+   */
+  shorten: function(url, descriptor, callback) {
+    var data = {
+      action: 'shorturl',
+      url: url
+    }
+
+    switch (typeof descriptor) {
+    case 'function':
+      callback = descriptor
+      descriptor = null
+      break
+    case 'string':
+      descriptor = { keyword: descriptor }
+      break
+    default:
+      // Do nothing
+    }
+
+    if (descriptor) {
+      data.keyword = descriptor.keyword
+      data.title = descriptor.title
+    }
+
+    this.sendRequest(data, [ 'shorturl', 'title', 'url' ], callback)
+
+    return this
+  },
+
+  /**
+   * Retrieves the statistics for all shortened URLs.
+   *
+   * Optionally, <code>criteria</code> can be provided to also include a refined set of links in the result. This
+   * includes filter, which provides limited control over the sorting, as well as limit and start, which allow for
+   * pagination. If <code>criteria</code> is a number, it will be treated as the limit.
+   *
+   * No links will be included in the result unless a limit is specified that is greater than zero. In that case, this
+   * method would effectively be doing the same as {@link DB#stats}.
+   *
+   * @param {YOURLS~SearchCriteria|number} [criteria] - the optional criteria (or limit, if it's a number) to be used to
+   * search for links to be included in the result
+   * @param {Function} callback - the callback function to be called with the result
+   * @return {YOURLS} A reference to this {@link YOURLS} for chaining purposes.
+   * @public
+   */
+  stats: function(criteria, callback) {
+    var data = { action: 'stats' }
+
+    switch (typeof criteria) {
+    case 'function':
+      callback = criteria
+      criteria = null
+      break
+    case 'number':
+      criteria = { limit: criteria }
+      break
+    default:
+      // Do nothing
+    }
+
+    if (criteria) {
+      data.filter = criteria.filter
+      data.limit = criteria.limit
+      data.start = criteria.start
+    }
+
+    this.sendRequest(data, [ 'links', 'stats' ], function(result, response) {
+      callback(YOURLS._sanitizeStatsResult(result), response)
+    })
+
+    return this
+  },
+
+  /**
+   * Creates an instance of {@link URL} for the specified shortened <code>url</code> which can be used to lookup more
+   * detailed information relating to it.
+   *
+   * No data is fetched just by calling this method; one of the methods on the returned instance need to be called for
+   * that to happen.
+   *
+   * @param {string} url - the shortened URL (or its keyword)
+   * @return {URL} The {@link URL} created for the shortened <code>url</code> or <code>null</code> if <code>url</code>
+   * is <code>null</code>.
+   * @public
+   */
+  url: function(url) {
+    return url ? new URL(url) : null
+  },
+
+  /**
+   * Retrieves the version of the connected YOURLS API.
+   *
+   * Optionally, <code>db</code> can be passed to indicate that the YOURLS database version should also be included in
+   * the result.
+   *
+   * @param {boolean} [db] - <code>true</code> to include the database version; otherwise <code>false</code>
+   * @param {Function} callback - the callback function to be called with the result
+   * @return {YOURLS} A reference to this {@link YOURLS} for chaining purposes.
+   * @public
+   */
+  version: function(db, callback) {
+    var data = { action: 'version' }
+
+    if (typeof db === 'function') {
+      callback = db
+      db = null
+    }
+
+    if (db != null) {
+      data.db = Number(db)
+    }
+
+    this.sendRequest(data, [ 'db_version', 'version' ], callback)
+
+    return this
   }
 
-  switch (typeof descriptor) {
-  case 'function':
-    callback = descriptor
-    descriptor = null
-    break
-  case 'string':
-    descriptor = { keyword: descriptor }
-    break
-  default:
-    // Do nothing
+}, {
+
+  /**
+   * Sanitizes the result of {@link YOURLS#stats} so that it's more usable in application code by transforming the links
+   * from an object mapping into an array.
+   *
+   * This method simply returns <code>result</code> if it is <code>null</code>, has no links property or one that is
+   * already an array (future-proofing).
+   *
+   * @param {Object} result - the result to be sanitized (may be <code>null</code>)
+   * @param {Object} [result.links] - the links to be transformed into an array (may be <code>null</code>)
+   * @return {Object} The modified <code>result</code> or <code>null</code> if <code>result</code> is <code>null</code>.
+   * @private
+   * @static
+   */
+  _sanitizeStatsResult: function(result) {
+    // Future-proofing by sanitizing links *only* when not already an array
+    if (!result || !result.links || isArray(result.links)) {
+      return result
+    }
+
+    var index = 1
+    var link
+    var links = []
+
+    while ((link = result.links['link_' + index]) != null) {
+      links.push(link)
+      index++
+    }
+
+    result.links = links
+
+    return result
   }
 
-  if (descriptor) {
-    data.keyword = descriptor.keyword
-    data.title = descriptor.title
-  }
-
-  jsonp(data, [ 'shorturl', 'title', 'url' ], callback)
-
-  return this
-}
-
-/**
- * Retrieves the statistics for all shortened URLs.
- *
- * Optionally, <code>criteria</code> can be provided to also include a refined set of links in the result. This includes
- * filter, which provides limited control over the sorting, as well as limit and start, which allow for pagination. If
- * <code>criteria</code> is a number, it will be treated as the limit.
- *
- * No links will be included in the result unless a limit is specified that is greater than zero. In that case, this
- * method would effectively be doing the same as {@link DB#stats}.
- *
- * @param {YOURLS~SearchCriteria|number} [criteria] - the optional criteria (or limit, if it's a number) to be used to
- * search for links to be included in the result
- * @param {Function} callback - the callback function to be called with the result
- * @return {YOURLS} A reference to this {@link YOURLS} for chaining purposes.
- * @public
- */
-YOURLS.prototype.stats = function(criteria, callback) {
-  var data = { action: 'stats' }
-
-  switch (typeof criteria) {
-  case 'function':
-    callback = criteria
-    criteria = null
-    break
-  case 'number':
-    criteria = { limit: criteria }
-    break
-  default:
-    // Do nothing
-  }
-
-  if (criteria) {
-    data.filter = criteria.filter
-    data.limit = criteria.limit
-    data.start = criteria.start
-  }
-
-  jsonp(data, [ 'links', 'stats' ], function(result, response) {
-    callback(sanitizeStatsResult(result), response)
-  })
-
-  return this
-}
-
-/**
- * Creates an instance of {@link URL} for the specified shortened <code>url</code> which can be used to lookup more
- * detailed information relating to it.
- *
- * No data is fetched just by calling this function; one of the functions on the returned instance need to be called for
- * that to happen.
- *
- * @param {string} url - the shortened URL (or its keyword)
- * @return {URL} The {@link URL} created for the shortened <code>url</code> or <code>null</code> if <code>url</code> is
- * <code>null</code>.
- * @public
- */
-YOURLS.prototype.url = function(url) {
-  return url ? new URL(url) : null
-}
-
-/**
- * Retrieves the version of the connected YOURLS API.
- *
- * Optionally, <code>db</code> can be passed to indicate that the YOURLS database version should also be included in the
- * result.
- *
- * @param {boolean} [db] - <code>true</code> to include the database version; otherwise <code>false</code>
- * @param {Function} callback - the callback function to be called with the result
- * @return {YOURLS} A reference to this {@link YOURLS} for chaining purposes.
- * @public
- */
-YOURLS.prototype.version = function(db, callback) {
-  var data = { action: 'version' }
-
-  if (typeof db === 'function') {
-    callback = db
-    db = null
-  }
-
-  if (db != null) {
-    data.db = Number(db)
-  }
-
-  jsonp(data, [ 'db_version', 'version' ], callback)
-
-  return this
-}
+})
 
 /**
  * The singleton instance of {@link YOURLS}.

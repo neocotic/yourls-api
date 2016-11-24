@@ -16,6 +16,7 @@
     "url",
     "shortener",
     "api",
+    "json",
     "jsonp"
   ],
   "repository": {

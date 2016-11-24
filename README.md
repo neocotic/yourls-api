@@ -18,8 +18,6 @@
 [YOURLS API](https://github.com/neocotic/yourls-api) is a JavaScript library that provides bindings for
 [YOURLS](https://yourls.org) URL shortener servers.
 
-> This library is only compatible with YOURLS servers running version **1.5.1** or newer as it requires JSONP support.
-
 [![Build Status](https://img.shields.io/travis/neocotic/yourls-api/develop.svg?style=flat-square)](https://travis-ci.org/neocotic/yourls-api)
 [![Dev Dependency Status](https://img.shields.io/david/dev/neocotic/yourls-api.svg?style=flat-square)](https://david-dm.org/neocotic/yourls-api#info=devDependencies)
 [![License](https://img.shields.io/npm/l/yourls-api.svg?style=flat-square)](https://github.com/neocotic/yourls-api/blob/master/LICENSE.md)
@@ -69,7 +67,7 @@ responses to see all of the data that is available.
 ### Connecting
 
 ``` javascript
-yourls.connect(url[, credentials])
+yourls.connect(url[, credentials][, options])
 ```
 
 This is the first step and is where you'll provide the `url` of the YOURLS API that you wish to connect to. It **must**
@@ -120,11 +118,47 @@ yourls.connect('https://example.com/yourls-api.php', {
 })
 ```
 
+> **IMPORTANT:** When sending `GET` requests, by design, all information will be included in the URL of the request
+> This includes data as well as *any credentials* used to authenticate with the API. You have been warned.
+> This is unavoidable when sending requests in the JSONP format but, when using the JSON format, you can send `POST`
+> requests, which means that your data is sent inside the body of the request. Combine this with HTTPS and your data and
+> credentials cannot be sniffed over the network.
+
+As you may have noticed; this method also accepts the following entirely optional `options`:
+
+Option | Description                         | Default
+------ | ----------------------------------- | ---------
+format | Format in which requests are sent   | `"jsonp"`
+method | HTTP method to be used for requests | `"GET"`
+
+``` javascript
+// Does the same as specifying no options (i.e. using defaults)
+yourls.connect('https://example.com/yourls-api.php', null, {
+  format: 'jsonp',
+  method: 'GET'
+})
+
+// Best practice if you want to secure the data you're transmitting and you've setup CORS, if needed
+yourls.connect('https://example.com/yourls-api.php', {
+  signature: '3002a61584'
+}, {
+  format: 'json',
+  method: 'POST'
+})
+```
+
+The following formats are supported with the corresponding HTTP methods:
+
+Format | HTTP Methods
+------ | ------------
+json   | GET, POST
+jsonp  | GET
+
+> **IMPORTANT:** The YOURLS server must be running version **1.5.1** or newer in order to send requests in the JSONP
+> format.
+
 Despite the name of this method, no connection or authentication is carried out at this point and this initial method
 simply stores these values to prevent you from having to specify them with every API call.
-
-> When using JSONP to send requests, by design, all information will be included in the URL of the request. This
-> includes data as well as **any credentials** used to authenticate with the API. You have been warned.
 
 ### Disconnecting
 
@@ -271,6 +305,7 @@ yourls.url(url).expand(callback(result, response))
 This method expands the shortened `url` into the original (long) URL.
 
 ``` javascript
+// Get more details for link
 yourls.url('https://example.com/yourls').expand(function(result, response) {
   console.log(result.keyword)
   //=> "yourls"
@@ -290,6 +325,7 @@ yourls.url(url).stats(callback(result, response))
 This method fetches the statistics for the shortened `url`.
 
 ``` javascript
+// Get statistics only for this link
 yourls.url('https://example.com/yourls').stats(function(result, response) {
   console.log(result.clicks)
   //=> "123"
@@ -309,6 +345,7 @@ yourls.version([db, ]callback(result, response))
 This methods fetches the version of YOURLS running on the connected server.
 
 ``` javascript
+// Get YOURLS version
 yourls.version(function(result, response) {
   console.log(result.version)
   //=> "1.7"
@@ -318,6 +355,7 @@ yourls.version(function(result, response) {
 Optionally, a `db` flag can be enabled for the YOURLS database version to also be included in the result.
 
 ``` javascript
+// Get YOURLS database version as well
 yourls.version(true, function(result, response) {
   console.log(result.version)
   //=> "1.7"
@@ -329,6 +367,7 @@ yourls.version(true, function(result, response) {
 ---
 
 ``` javascript
+// Get version of this library
 console.log(yourls.VERSION)
 //=> "2.0.0"
 ```

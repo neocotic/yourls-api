@@ -7,9 +7,19 @@
     "sourceType": "module"
   },
   "rules": {
+    "callback-return": "off",
     "max-params": [
       "error",
       4
-    ]
+    ],
+    "no-invalid-this": "off",
+    "no-unused-vars": [
+      "warn",
+      {
+        "args": "none",
+        "vars": "all"
+      }
+    ],
+    "sort-keys": "off"
   }
 }

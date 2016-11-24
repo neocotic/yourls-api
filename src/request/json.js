@@ -20,27 +20,53 @@
  * SOFTWARE.
  */
 
+import { Request } from './request'
+
 /**
- * Creates a serialized representation of the specified <code>params</code> into a URL query string.
+ * An implementation of {@link Request} that provides support for JSON requests to the YOURLS API.
  *
- * @param {Object} [params] - the hash of parameter key/value pairs to be serialized
- * @return {string} A URL query string representing <code>params</code>.
+ * JSON requests can only be sent using the "GET" or "POST" HTTP methods.
+ *
+ * @constructor
+ * @extends Request
  * @protected
  */
-export function paramify(params) {
-  if (!params) {
-    return ''
-  }
+export var JSONRequest = Request.extend({
 
-  var results = []
+  /**
+   * @inheritDoc
+   * @override
+   */
+  getSupportedHttpMethods: function() {
+    return [ 'GET', 'POST' ]
+  },
 
-  for (var key in params) {
-    if (Object.prototype.hasOwnProperty.call(params, key)) {
-      if (params[key] != null) {
-        results.push(encodeURIComponent(key) + '=' + encodeURIComponent(params[key]))
+  /**
+   * @inheritDoc
+   * @override
+   */
+  process: function(method, url, body, callback) {
+    var xhr = new XMLHttpRequest()
+    xhr.open(method, url, true)
+    xhr.onreadystatechange = function() {
+      var response
+
+      if (xhr.readyState === 4) {
+        try {
+          response = JSON.parse(xhr.responseText)
+          callback(response)
+        } catch (e) {
+          throw new Error('Unable to parse response: ' + e)
+        }
       }
     }
+
+    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest')
+    if (body != null) {
+      xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded')
+    }
+
+    xhr.send(body)
   }
 
-  return results.join('&')
-}
+})

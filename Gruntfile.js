@@ -21,7 +21,6 @@
  */
 
 module.exports = function(grunt) {
-  var commonjs
   var nodeResolve
   var semver = require('semver')
   var uglify
@@ -67,7 +66,6 @@ module.exports = function(grunt) {
   var testTasks = [ 'compile' ]
 
   if (semver.satisfies(process.version, '>=0.12')) {
-    commonjs = require('rollup-plugin-commonjs')
     nodeResolve = require('rollup-plugin-node-resolve')
     uglify = require('rollup-plugin-uglify')
 
@@ -93,8 +91,7 @@ module.exports = function(grunt) {
                   browser: true,
                   jsnext: true,
                   main: true
-                }),
-                commonjs()
+                })
               ]
             }
           },
@@ -117,7 +114,6 @@ module.exports = function(grunt) {
                   jsnext: true,
                   main: true
                 }),
-                commonjs(),
                 uglify({
                   output: {
                     comments: function(node, comment) {
