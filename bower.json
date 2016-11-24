@@ -23,6 +23,11 @@
     "url": "https://github.com/neocotic/yourls-api.git"
   },
   "main": "dist/yourls.js",
+  "moduleType": [
+    "amd",
+    "globals",
+    "node"
+  ],
   "ignore": [
     ".*",
     "src/",
