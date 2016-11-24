@@ -30,8 +30,9 @@
     "node"
   ],
   "ignore": [
-    ".*",
     "src/",
+    "test/",
+    ".*",
     "AUTHORS.md",
     "CHANGES.md",
     "CONTRIBUTING.md",

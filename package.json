@@ -25,17 +25,22 @@
     "url": "https://github.com/neocotic/yourls-api.git"
   },
   "devDependencies": {
+    "chai": "^3.5.0",
     "eslint-config-skelp": "^0.1.5",
     "grunt": "^1.0.1",
     "grunt-cli": "^1.2.0",
     "grunt-contrib-clean": "^1.0.0",
     "grunt-contrib-watch": "^1.0.0",
     "grunt-eslint": "^19.0.0",
+    "grunt-mocha-test": "^0.13.2",
     "grunt-rollup": "^1.0.1",
+    "mocha": "^3.1.2",
     "oopsy": "^0.2.0",
+    "reify": "^0.4.1",
     "rollup-plugin-node-resolve": "^2.0.0",
     "rollup-plugin-uglify": "^1.0.1",
-    "semver": "^5.3.0"
+    "semver": "^5.3.0",
+    "sinon": "^1.17.6"
   },
   "main": "dist/yourls.js",
   "jsnext:main": "src/yourls.js",

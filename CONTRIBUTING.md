@@ -6,8 +6,9 @@ If you have any questions about [YOURLS API](https://github.com/neocotic/yourls-
 Please [search existing issues](https://github.com/neocotic/yourls-api/issues) for the same feature and/or issue before
 raising a new issue. Commenting on an existing issue is usually preferred over raising duplicate issues.
 
-Please ensure that all files conform to the coding standards, using the same coding style as the rest of the code base.
-This can be done easily via command-line:
+Please ensure that all files conform to the coding standards, using the same coding style as the rest of the code base,
+and that you add/update any relevant unit tests (found in the `test` directory) and ensure that all tests are currently
+passing. This can be done easily via command-line:
 
 ``` bash
 # install/update package dependencies

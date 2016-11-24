@@ -53,6 +53,16 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
 
+    mochaTest: {
+      test: {
+        options: {
+          reporter: 'spec',
+          require: 'reify'
+        },
+        src: [ 'test/**/*.spec.js' ]
+      }
+    },
+
     watch: {
       all: {
         files: [ 'src/**/*.js' ],
@@ -63,7 +73,7 @@ module.exports = function(grunt) {
 
   var buildTasks = [ 'compile' ]
   var compileTasks = []
-  var testTasks = [ 'compile' ]
+  var testTasks = [ 'compile', 'mochaTest' ]
 
   if (semver.satisfies(process.version, '>=0.12')) {
     nodeResolve = require('rollup-plugin-node-resolve')
@@ -150,6 +160,7 @@ module.exports = function(grunt) {
   }
 
   grunt.loadNpmTasks('grunt-contrib-watch')
+  grunt.loadNpmTasks('grunt-mocha-test')
 
   grunt.registerTask('default', [ 'build' ])
   grunt.registerTask('build', buildTasks)
