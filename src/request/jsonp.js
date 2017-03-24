@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Alasdair Mercer
+ * Copyright (C) 2017 Alasdair Mercer
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,128 +20,116 @@
  * SOFTWARE.
  */
 
-import { API } from '../api'
-import { isArray } from '../util/array'
-import { paramify } from './paramify'
+import { Request } from './request'
 
 /**
- * The key of the callback function holder within the global namespace.
+ * The seed to be used to generate IDs.
  *
  * @private
- * @type {string}
+ * @type {number}
  */
-var callbackHolderKey = '__yourls' + Date.now() + '_jsonp'
-/**
- * Contains the callback functions for active JSONP requests.
- *
- * Callback references should be removed immediately once they have been called.
- *
- * Due to the nature of JSON, a reference to this object <b>must</b> be publicly available (i.e. global).
- *
- * @private
- * @type {Object<number, Function>}
- */
-var callbackHolder = window[callbackHolderKey] = {}
+var seed = new Date().getTime()
 
 /**
- * Generates a quick and dirty unique ID for a callback.
+ * An implementation of {@link Request} that provides support for JSONP requests to the YOURLS API.
  *
- * @return {number} The generated callback ID.
- * @private
- */
-function generateCallbackId() {
-  var id = Date.now()
-  while (callbackHolder[id]) {
-    id++
-  }
-
-  return id
-}
-
-/**
- * Extracts the values of the properties with the specified <code>names</code> from the <code>response</code> provided
- * and returns them in a single result.
+ * JSONP requests can only be sent using the "GET" HTTP method.
  *
- * If <code>names</code> is a string or only contains a single string, only the value for that named property will be
- * returned. Otherwise, an object containing the key/value pairs for each named property will be returned.
- *
- * If <code>response</code> is <code>null</code> this function will return <code>null</code>.
- *
- * @param {string|string[]} names - the names of the <code>response</code> properties whose values are to be returned as
- * the result
- * @param {Object} response - the YOURLS API response
- * @return {*} The result extracted from <code>response</code>.
- * @private
- */
-function getResult(names, response) {
-  names = isArray(names) ? names : [ names ]
-
-  var i
-  var name
-  var result = null
-
-  if (!response) {
-    return result
-  }
-
-  if (names.length === 1) {
-    result = response[names[0]]
-  } else {
-    result = {}
-
-    for (i = 0; i < names.length; i++) {
-      name = names[i]
-
-      if (typeof response[name] !== 'undefined') {
-        result[name] = response[name]
-      }
-    }
-  }
-
-  return result
-}
-
-/**
- * Sends a JSONP request to the connected YOURLS API with the <code>data</code> provided which should, in turn, call the
- * specified <code>callback</code> with the result.
- *
- * If the request is successful, <code>callback</code> will be passed the value of the named properties from the
- * response. If <code>resultNames</code> is a string or only contains a single string, only the value for that named
- * property will be passed as the first argument. Otherwise, an object containing the key/value pairs for each named
- * property will be passed as the first argument. The actual response will always be passed as the second argument.
- *
- * Due to the nature of JSONP, all information will be included in the URL of the request. This includes
- * <code>data</code> as well as <b>any credentials</b> used to authenticate with the API. You have been warned.
- *
- * @param {Object} data - the data to be sent
- * @param {string|string[]} resultNames - the names of the response properties whose values are to be passed to
- * <code>callback</code> as the first argument
- * @param {Function} callback - the function to be called with the result
- * @return {void}
+ * @constructor
+ * @extends Request
  * @protected
  */
-export function jsonp(data, resultNames, callback) {
-  var api = API.fetch()
-  var id = generateCallbackId()
-  var script = document.createElement('script')
+export var JSONPRequest = Request.extend(function() {
+  JSONPRequest.super_.call(this)
 
-  callbackHolder[id] = function(response) {
-    var result = getResult(resultNames, response)
-
-    delete callbackHolder[id]
-    script.parentNode.removeChild(script)
-
-    callback(result, response)
+  if (!window[JSONPRequest._callbackHolderKey]) {
+    window[JSONPRequest._callbackHolderKey] = JSONPRequest._callbackHolder
   }
 
-  var target = api.url + '?' + paramify({ callback: callbackHolderKey + '[' + id + ']', format: 'jsonp' })
-  if (api.credentials) {
-    target += '&' + paramify(api.credentials)
-  }
-  if (data) {
-    target += '&' + paramify(data)
+  /**
+   * The generated ID which is used to store a reference to the callback function within the holder so that the JSONP
+   * payload can find it in the global namespace.
+   *
+   * @private
+   * @type {number}
+   */
+  this._id = JSONPRequest._generateId()
+}, {
+
+  /**
+   * @inheritDoc
+   * @override
+   */
+  getSupportedHttpMethods: function() {
+    return [ 'GET' ]
+  },
+
+  /**
+   * @inheritDoc
+   * @override
+   */
+  buildBody: function(api, data) {
+    var body = JSONPRequest.super_.prototype.buildBody.call(this, api, data)
+    body.callback = JSONPRequest._callbackHolderKey + '[' + this._id + ']'
+
+    return body
+  },
+
+  /**
+   * @inheritDoc
+   * @override
+   */
+  process: function(method, url, body, callback) {
+    var script = document.createElement('script')
+
+    var self = this
+    JSONPRequest._callbackHolder[this._id] = function(response) {
+      delete JSONPRequest._callbackHolder[self._id]
+      script.parentNode.removeChild(script)
+
+      callback(response)
+    }
+
+    script.setAttribute('src', url)
+    document.getElementsByTagName('head')[0].appendChild(script)
   }
 
-  script.setAttribute('src', target)
-  document.getElementsByTagName('head')[0].appendChild(script)
-}
+}, {
+
+  /**
+   * The key of the callback function holder within the global namespace.
+   *
+   * @private
+   * @static
+   * @type {string}
+   */
+  _callbackHolderKey: '__yourls' + seed + '_jsonp',
+
+  /**
+   * Contains the callback functions for active JSONP requests.
+   *
+   * Callback references should be removed immediately once they have been called.
+   *
+   * Due to the nature of JSON, a reference to this object <b>must</b> be publicly available (i.e. global).
+   *
+   * @private
+   * @static
+   * @type {Object<number, Function>}
+   */
+  _callbackHolder: {},
+
+  /**
+   * Generates an ID to be used when storing a reference to a callback function.
+   *
+   * @return {number} The generated ID.
+   * @private
+   */
+  _generateId: function() {
+    do {
+      seed++
+    } while (JSONPRequest._callbackHolder[seed])
+
+    return seed
+  }
+
+})

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Alasdair Mercer
+ * Copyright (C) 2017 Alasdair Mercer
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,16 +20,19 @@
  * SOFTWARE.
  */
 
-import { jsonp } from './request/jsonp'
+import { Requestor } from './request/requestor'
 
 /**
  * Provides the ability to lookup information related to the specified shortened <code>url</code>.
  *
  * @param {string} url - the shortened URL (or its keyword) to be used
  * @constructor
+ * @extends Requestor
  * @protected
  */
-export function URL(url) {
+export var URL = Requestor.extend(function(url) {
+  URL.super_.call(this)
+
   /**
    * Either the shortened URL or its keyword for this {@link URL}.
    *
@@ -37,7 +40,7 @@ export function URL(url) {
    * @type {string}
    */
   this.url = url
-}
+})
 
 /**
  * Retrieves the original ("long") URL for this shortened {@link URL}.
@@ -52,7 +55,7 @@ URL.prototype.expand = function(callback) {
     shorturl: this.url
   }
 
-  jsonp(data, [ 'keyword', 'longurl', 'shorturl' ], callback)
+  this.sendRequest(data, [ 'keyword', 'longurl', 'shorturl' ], callback)
 
   return this
 }
@@ -70,7 +73,7 @@ URL.prototype.stats = function(callback) {
     shorturl: this.url
   }
 
-  jsonp(data, 'link', callback)
+  this.sendRequest(data, 'link', callback)
 
   return this
 }

@@ -1,6 +1,6 @@
 {
   "name": "yourls-api",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Bindings for the YOURLS API",
   "homepage": "https://github.com/neocotic/yourls-api",
   "authors": [
@@ -16,6 +16,7 @@
     "url",
     "shortener",
     "api",
+    "json",
     "jsonp"
   ],
   "repository": {
@@ -23,6 +24,11 @@
     "url": "https://github.com/neocotic/yourls-api.git"
   },
   "main": "dist/yourls.js",
+  "moduleType": [
+    "amd",
+    "globals",
+    "node"
+  ],
   "ignore": [
     ".*",
     "src/",

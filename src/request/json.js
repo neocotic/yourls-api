@@ -20,30 +20,53 @@
  * SOFTWARE.
  */
 
-import { Requestor } from './request/requestor'
+import { Request } from './request'
 
 /**
- * Provides the ability to lookup information related to the YOURLS database.
+ * An implementation of {@link Request} that provides support for JSON requests to the YOURLS API.
+ *
+ * JSON requests can only be sent using the "GET" or "POST" HTTP methods.
  *
  * @constructor
- * @extends Requestor
+ * @extends Request
  * @protected
  */
-export var DB = Requestor.extend({
+export var JSONRequest = Request.extend({
 
   /**
-   * Retrieves the statistics for this {@link DB}.
-   *
-   * @param {Function} callback - the callback function to be called with the result
-   * @return {DB} A reference to this {@link DB} for chaining purposes.
-   * @public
+   * @inheritDoc
+   * @override
    */
-  stats: function(callback) {
-    var data = { action: 'db-stats' }
+  getSupportedHttpMethods: function() {
+    return [ 'GET', 'POST' ]
+  },
 
-    this.sendRequest(data, 'db-stats', callback)
+  /**
+   * @inheritDoc
+   * @override
+   */
+  process: function(method, url, body, callback) {
+    var xhr = new XMLHttpRequest()
+    xhr.open(method, url, true)
+    xhr.onreadystatechange = function() {
+      var response
 
-    return this
+      if (xhr.readyState === 4) {
+        try {
+          response = JSON.parse(xhr.responseText)
+          callback(response)
+        } catch (e) {
+          throw new Error('Unable to parse response: ' + e)
+        }
+      }
+    }
+
+    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest')
+    if (body != null) {
+      xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded')
+    }
+
+    xhr.send(body)
   }
 
 })

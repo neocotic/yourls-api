@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Alasdair Mercer
+ * Copyright (C) 2017 Alasdair Mercer
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,26 +21,29 @@
  */
 
 /**
- * Creates a serialized representation of the specified <code>params</code> into a URL query string.
+ * Extends the specified <code>target</code> object with the properties in each of the <code>sources</code> provided.
  *
- * @param {Object} [params] - the hash of parameter key/value pairs to be serialized
- * @return {string} A URL query string representing <code>params</code>.
+ * Any of the <code>sources</code> that are <code>null</code> will simply be ignored.
+ *
+ * @param {Object} target - the target object which should be extended
+ * @param {...Object} [sources] - the source objects whose properties are to be copied onto <code>target</code>
+ * @return {Object} A reference to <code>target</code>.
  * @protected
  */
-export function paramify(params) {
-  if (!params) {
-    return ''
-  }
+export function extend(target, sources) {
+  sources = Array.prototype.slice.call(arguments, 1)
 
-  var results = []
+  for (var i = 0, length = sources.length, property, source; i < length; i++) {
+    source = sources[i]
 
-  for (var key in params) {
-    if (Object.prototype.hasOwnProperty.call(params, key)) {
-      if (params[key] != null) {
-        results.push(encodeURIComponent(key) + '=' + encodeURIComponent(params[key]))
+    if (source) {
+      for (property in source) {
+        if (Object.prototype.hasOwnProperty.call(source, property)) {
+          target[property] = source[property]
+        }
       }
     }
   }
 
-  return results.join('&')
+  return target
 }

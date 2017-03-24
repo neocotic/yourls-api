@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Alasdair Mercer
+ * Copyright (C) 2017 Alasdair Mercer
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,7 +23,7 @@
 /**
  * Returns whether the specified <code>obj</code> is an array.
  *
- * This function will use the native <code>Array.isArray</code>, if available.
+ * This method will use the native <code>Array.isArray</code>, if available.
  *
  * @param {*} obj - the object to be checked (may be <code>null</code>)
  * @return {boolean} <code>true</code> if <code>obj</code> is an array; otherwise <code>false</code>.
