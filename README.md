@@ -46,8 +46,8 @@ intended for use in the browser. `npm` installations are supported for the many 
 
 If you want to simply download the file to be used in the browser you can find them below:
 
-* [Development Version](https://cdn.rawgit.com/neocotic/yourls-api/master/dist/yourls.js) (TODO - [Source Map](https://cdn.rawgit.com/neocotic/yourls-api/master/dist/yourls.js.map))
-* [Production Version](https://cdn.rawgit.com/neocotic/yourls-api/master/dist/yourls.min.js) (TODO - [Source Map](https://cdn.rawgit.com/neocotic/yourls-api/master/dist/yourls.min.js.map))
+* [Development Version](https://cdn.rawgit.com/neocotic/yourls-api/master/dist/yourls.js) (47kb - [Source Map](https://cdn.rawgit.com/neocotic/yourls-api/master/dist/yourls.js.map))
+* [Production Version](https://cdn.rawgit.com/neocotic/yourls-api/master/dist/yourls.min.js) (5.6kb - [Source Map](https://cdn.rawgit.com/neocotic/yourls-api/master/dist/yourls.min.js.map))
 
 ## API
 
@@ -369,7 +369,7 @@ yourls.version(true, function(result, response) {
 ``` javascript
 // Get version of this library
 console.log(yourls.VERSION)
-//=> "2.1.0"
+//=> "3.0.0"
 ```
 
 The current version of this library.

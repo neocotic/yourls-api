@@ -56,7 +56,7 @@ var YOURLS = Requestor.extend(function() {
    * @public
    * @type {string}
    */
-  this.VERSION = '2.1.0'
+  this.VERSION = '3.0.0'
 }, {
 
   /**

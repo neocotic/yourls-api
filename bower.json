@@ -1,6 +1,6 @@
 {
   "name": "yourls-api",
-  "version": "2.1.0",
+  "version": "3.0.0",
   "description": "Bindings for the YOURLS API",
   "homepage": "https://github.com/neocotic/yourls-api",
   "authors": [
