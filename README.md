@@ -46,8 +46,8 @@ intended for use in the browser. `npm` installations are supported for the many 
 
 If you want to simply download the file to be used in the browser you can find them below:
 
-* [Development Version](https://cdn.rawgit.com/neocotic/yourls-api/master/dist/yourls.js) (TODO - [Source Map](https://cdn.rawgit.com/neocotic/yourls-api/master/dist/yourls.js.map))
-* [Production Version](https://cdn.rawgit.com/neocotic/yourls-api/master/dist/yourls.min.js) (TODO - [Source Map](https://cdn.rawgit.com/neocotic/yourls-api/master/dist/yourls.min.js.map))
+* [Development Version](https://cdn.rawgit.com/neocotic/yourls-api/master/dist/yourls.js) (47kb - [Source Map](https://cdn.rawgit.com/neocotic/yourls-api/master/dist/yourls.js.map))
+* [Production Version](https://cdn.rawgit.com/neocotic/yourls-api/master/dist/yourls.min.js) (5.6kb - [Source Map](https://cdn.rawgit.com/neocotic/yourls-api/master/dist/yourls.min.js.map))
 
 ## API
 
@@ -127,23 +127,23 @@ yourls.connect('https://example.com/yourls-api.php', {
 As you may have noticed; this method also accepts the following entirely optional `options`:
 
 Option | Description                         | Default
------- | ----------------------------------- | ---------
-format | Format in which requests are sent   | `"jsonp"`
-method | HTTP method to be used for requests | `"GET"`
+------ | ----------------------------------- | -----------------------------------------------
+format | Format in which requests are sent   | `"json"`
+method | HTTP method to be used for requests | `"POST"` for `"json"` and `"GET"` for `"jsonp"`
 
 ``` javascript
 // Does the same as specifying no options (i.e. using defaults)
+// This is the best practice if you want to secure the data you're transmitting and you've setup CORS, if needed
 yourls.connect('https://example.com/yourls-api.php', null, {
-  format: 'jsonp',
-  method: 'GET'
+  format: 'json',
+  method: 'POST'
 })
 
-// Best practice if you want to secure the data you're transmitting and you've setup CORS, if needed
+// However, if you don't want to setup CORS (or can't), you can try using JSONP
 yourls.connect('https://example.com/yourls-api.php', {
   signature: '3002a61584'
 }, {
-  format: 'json',
-  method: 'POST'
+  format: 'jsonp'
 })
 ```
 
@@ -369,7 +369,7 @@ yourls.version(true, function(result, response) {
 ``` javascript
 // Get version of this library
 console.log(yourls.VERSION)
-//=> "2.1.0"
+//=> "3.0.0"
 ```
 
 The current version of this library.
