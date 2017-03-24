@@ -177,56 +177,6 @@
    */
 
   /**
-   * Extends the specified <code>target</code> object with the properties in each of the <code>sources</code> provided.
-   *
-   * Any of the <code>sources</code> that are <code>null</code> will simply be ignored.
-   *
-   * @param {Object} target - the target object which should be extended
-   * @param {...Object} [sources] - the source objects whose properties are to be copied onto <code>target</code>
-   * @return {Object} A reference to <code>target</code>.
-   * @protected
-   */
-  function extend$1(target, sources) {
-    sources = Array.prototype.slice.call(arguments, 1);
-
-    for (var i = 0, length = sources.length, property, source; i < length; i++) {
-      source = sources[i];
-
-      if (source) {
-        for (property in source) {
-          if (Object.prototype.hasOwnProperty.call(source, property)) {
-            target[property] = source[property];
-          }
-        }
-      }
-    }
-
-    return target
-  }
-
-  /*
-   * Copyright (C) 2017 Alasdair Mercer
-   *
-   * Permission is hereby granted, free of charge, to any person obtaining a copy
-   * of this software and associated documentation files (the "Software"), to deal
-   * in the Software without restriction, including without limitation the rights
-   * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-   * copies of the Software, and to permit persons to whom the Software is
-   * furnished to do so, subject to the following conditions:
-   *
-   * The above copyright notice and this permission notice shall be included in all
-   * copies or substantial portions of the Software.
-   *
-   * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-   * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-   * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-   * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-   * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-   * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-   * SOFTWARE.
-   */
-
-  /**
    * Contains information on how to connect to and authenticate with a YOURLS server.
    *
    * @param {string} [url=''] - the URL for the YOURLS server
@@ -262,18 +212,6 @@
      */
     this.options = API._sanitizeOptions(options);
   }, null, {
-
-    /**
-     * The default options to be used.
-     *
-     * @protected
-     * @static
-     * @type {API~Options}
-     */
-    defaultOptions: {
-      format: 'jsonp',
-      method: 'GET'
-    },
 
     /**
      * The singleton {@link API} instance which is privatized to prevent leaking credentials.
@@ -328,16 +266,19 @@
      * @static
      */
     _sanitizeOptions: function(options) {
-      var result = extend$1({}, API.defaultOptions);
-      if (!options) {
-        return result
+      if (options == null) {
+        options = {};
       }
+
+      var result = { format: 'json' };
 
       if (options.format) {
         result.format = options.format.toLowerCase();
       }
       if (options.method) {
         result.method = options.method.toUpperCase();
+      } else {
+        result.method = result.format === 'json' ? 'POST' : 'GET';
       }
 
       return result
@@ -370,10 +311,61 @@
    * error will be thrown when such attempts occur.
    *
    * @typedef {Object} API~Options
-   * @property {string} [format="jsonp"] - The format in which requests are sent (either <code>"json"</code> or
+   * @property {string} [format="json"] - The format in which requests are sent (either <code>"json"</code> or
    * <code>"jsonp"</code>).
-   * @property {string} [method="GET"] - The HTTP method to be used for requests.
+   * @property {string} [method] - The HTTP method to be used for requests. Defaults to <code>"POST"</code> when
+   * <code>format</code> is <code>"json"</code> and <code>"GET"</code> when <code>format</code> is <code>"jsonp"</code>.
    */
+
+  /*
+   * Copyright (C) 2017 Alasdair Mercer
+   *
+   * Permission is hereby granted, free of charge, to any person obtaining a copy
+   * of this software and associated documentation files (the "Software"), to deal
+   * in the Software without restriction, including without limitation the rights
+   * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   * copies of the Software, and to permit persons to whom the Software is
+   * furnished to do so, subject to the following conditions:
+   *
+   * The above copyright notice and this permission notice shall be included in all
+   * copies or substantial portions of the Software.
+   *
+   * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+   * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+   * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+   * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+   * SOFTWARE.
+   */
+
+  /**
+   * Extends the specified <code>target</code> object with the properties in each of the <code>sources</code> provided.
+   *
+   * Any of the <code>sources</code> that are <code>null</code> will simply be ignored.
+   *
+   * @param {Object} target - the target object which should be extended
+   * @param {...Object} [sources] - the source objects whose properties are to be copied onto <code>target</code>
+   * @return {Object} A reference to <code>target</code>.
+   * @protected
+   */
+  function extend$1(target, sources) {
+    sources = Array.prototype.slice.call(arguments, 1);
+
+    for (var i = 0, length = sources.length, property, source; i < length; i++) {
+      source = sources[i];
+
+      if (source) {
+        for (property in source) {
+          if (Object.prototype.hasOwnProperty.call(source, property)) {
+            target[property] = source[property];
+          }
+        }
+      }
+    }
+
+    return target
+  }
 
   /*
    * Copyright (C) 2017 Alasdair Mercer

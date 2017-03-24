@@ -22,8 +22,6 @@
 
 import Oopsy from 'oopsy'
 
-import { extend } from './util/extend'
-
 /**
  * Contains information on how to connect to and authenticate with a YOURLS server.
  *
@@ -60,18 +58,6 @@ export var API = Oopsy.extend(function(url, credentials, options) {
    */
   this.options = API._sanitizeOptions(options)
 }, null, {
-
-  /**
-   * The default options to be used.
-   *
-   * @protected
-   * @static
-   * @type {API~Options}
-   */
-  defaultOptions: {
-    format: 'jsonp',
-    method: 'GET'
-  },
 
   /**
    * The singleton {@link API} instance which is privatized to prevent leaking credentials.
@@ -126,16 +112,19 @@ export var API = Oopsy.extend(function(url, credentials, options) {
    * @static
    */
   _sanitizeOptions: function(options) {
-    var result = extend({}, API.defaultOptions)
-    if (!options) {
-      return result
+    if (options == null) {
+      options = {}
     }
+
+    var result = { format: 'json' }
 
     if (options.format) {
       result.format = options.format.toLowerCase()
     }
     if (options.method) {
       result.method = options.method.toUpperCase()
+    } else {
+      result.method = result.format === 'json' ? 'POST' : 'GET'
     }
 
     return result
@@ -168,7 +157,8 @@ export var API = Oopsy.extend(function(url, credentials, options) {
  * error will be thrown when such attempts occur.
  *
  * @typedef {Object} API~Options
- * @property {string} [format="jsonp"] - The format in which requests are sent (either <code>"json"</code> or
+ * @property {string} [format="json"] - The format in which requests are sent (either <code>"json"</code> or
  * <code>"jsonp"</code>).
- * @property {string} [method="GET"] - The HTTP method to be used for requests.
+ * @property {string} [method] - The HTTP method to be used for requests. Defaults to <code>"POST"</code> when
+ * <code>format</code> is <code>"json"</code> and <code>"GET"</code> when <code>format</code> is <code>"jsonp"</code>.
  */
