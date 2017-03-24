@@ -24,6 +24,9 @@
     "type": "git",
     "url": "https://github.com/neocotic/yourls-api.git"
   },
+  "dependencies": {
+    "oopsy": "^0.2.0"
+  },
   "devDependencies": {
     "eslint-config-skelp": "^0.1.5",
     "grunt": "^1.0.1",
@@ -33,7 +36,6 @@
     "grunt-eslint": "^19.0.0",
     "grunt-rollup": "^1.0.1",
     "load-grunt-tasks": "^3.5.2",
-    "oopsy": "^0.2.0",
     "rollup-plugin-node-resolve": "^2.0.0",
     "rollup-plugin-uglify": "^1.0.1"
   },
