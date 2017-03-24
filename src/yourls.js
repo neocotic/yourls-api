@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Alasdair Mercer
+ * Copyright (C) 2017 Alasdair Mercer
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -56,7 +56,7 @@ var YOURLS = Requestor.extend(function() {
    * @public
    * @type {string}
    */
-  this.VERSION = '2.0.0'
+  this.VERSION = '2.1.0'
 }, {
 
   /**

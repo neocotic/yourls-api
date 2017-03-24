@@ -1,3 +1,7 @@
+## Version 2.1.0, 2017.03.24
+
+* Support JSON requests (GET & POST) [#6](https://github.com/neocotic/yourls-api/issues/6)
+
 ## Version 2.0.0, 2016.11.23
 
 * Support time-limited signature token for [passwordless API](https://github.com/YOURLS/YOURLS/wiki/PasswordlessAPI) (Josh Panter) [#1](https://github.com/neocotic/yourls-api/issues/1)

@@ -1,6 +1,6 @@
 {
   "name": "yourls-api",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Bindings for the YOURLS API",
   "homepage": "https://github.com/neocotic/yourls-api",
   "bugs": {
@@ -32,15 +32,17 @@
     "grunt-contrib-watch": "^1.0.0",
     "grunt-eslint": "^19.0.0",
     "grunt-rollup": "^1.0.1",
+    "load-grunt-tasks": "^3.5.2",
     "oopsy": "^0.2.0",
     "rollup-plugin-node-resolve": "^2.0.0",
-    "rollup-plugin-uglify": "^1.0.1",
-    "semver": "^5.3.0"
+    "rollup-plugin-uglify": "^1.0.1"
   },
   "main": "dist/yourls.js",
+  "browser": "dist/yourls.js",
   "jsnext:main": "src/yourls.js",
   "scripts": {
     "build": "grunt build",
+    "ci": "grunt ci",
     "test": "grunt test"
   }
 }

@@ -15,13 +15,13 @@
                                         d8888888888 888         888
                                        d88P     888 888       8888888
 
-[YOURLS API](https://github.com/neocotic/yourls-api) is a JavaScript library that provides bindings for
-[YOURLS](https://yourls.org) URL shortener servers.
-
 [![Build Status](https://img.shields.io/travis/neocotic/yourls-api/develop.svg?style=flat-square)](https://travis-ci.org/neocotic/yourls-api)
-[![Dev Dependency Status](https://img.shields.io/david/dev/neocotic/yourls-api.svg?style=flat-square)](https://david-dm.org/neocotic/yourls-api#info=devDependencies)
+[![Dev Dependency Status](https://img.shields.io/david/dev/neocotic/yourls-api.svg?style=flat-square)](https://david-dm.org/neocotic/yourls-api?type=dev)
 [![License](https://img.shields.io/npm/l/yourls-api.svg?style=flat-square)](https://github.com/neocotic/yourls-api/blob/master/LICENSE.md)
 [![Release](https://img.shields.io/npm/v/yourls-api.svg?style=flat-square)](https://www.npmjs.com/package/yourls-api)
+
+[YOURLS API](https://github.com/neocotic/yourls-api) is a JavaScript library that provides bindings for
+[YOURLS](https://yourls.org) URL shortener servers.
 
 * [Install](#install)
 * [API](#api)
@@ -46,8 +46,8 @@ intended for use in the browser. `npm` installations are supported for the many 
 
 If you want to simply download the file to be used in the browser you can find them below:
 
-* [Development Version](https://github.com/neocotic/yourls-api/blob/master/dist/yourls.js)
-* [Production Version](https://github.com/neocotic/yourls-api/blob/master/dist/yourls.min.js)
+* [Development Version](https://cdn.rawgit.com/neocotic/yourls-api/master/dist/yourls.js) (TODO - [Source Map](https://cdn.rawgit.com/neocotic/yourls-api/master/dist/yourls.js.map))
+* [Production Version](https://cdn.rawgit.com/neocotic/yourls-api/master/dist/yourls.min.js) (TODO - [Source Map](https://cdn.rawgit.com/neocotic/yourls-api/master/dist/yourls.min.js.map))
 
 ## API
 
@@ -369,7 +369,7 @@ yourls.version(true, function(result, response) {
 ``` javascript
 // Get version of this library
 console.log(yourls.VERSION)
-//=> "2.0.0"
+//=> "2.1.0"
 ```
 
 The current version of this library.
@@ -403,6 +403,6 @@ A list of YOURLS API contributors can be found in
 
 ## License
 
-Copyright © 2016 Alasdair Mercer
+Copyright © 2017 Alasdair Mercer
 
 See [LICENSE.md](https://github.com/neocotic/yourls-api/blob/master/LICENSE.md) for more information on our MIT license.
